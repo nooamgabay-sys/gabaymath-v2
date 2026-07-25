@@ -1,0 +1,4286 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>גבאי מתמטיקה - שיעורים פרטיים</title>
+<link rel="icon" type="image/png" href="logo/favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/he.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+<style>
+/* ── CSS VARIABLES ─────────────────────────────────── */
+:root {
+  --bg: #0a0a0a;
+  --card-bg: rgba(22, 22, 22, 0.65);
+  --nav-bg: rgba(8, 8, 8, 0.88);
+  --gold: #c9a84c;
+  --yellow: #ffcc33;
+  --text: #e8e8e8;
+  --text-muted: rgba(255,255,255,0.52);
+  --border: rgba(255,255,255,0.07);
+  --border-gold: rgba(201, 168, 76, 0.22);
+  --glow: rgba(201, 168, 76, 0.4);
+  --yellow-glow: rgba(255,204,51,0.5);
+  --sym-color: rgba(201, 168, 76, 0.11);
+  --voice-widget-bg: rgba(18, 18, 18, 0.8);
+  --voice-widget-border: rgba(255, 255, 255, 0.1);
+  --voice-widget-shadow: 0 10px 25px rgba(0,0,0,0.18);
+  --voice-widget-title: #F9FAFB;
+  --voice-widget-text: rgba(249,250,251,0.8);
+  --voice-widget-status-bg: rgba(255,255,255,0.08);
+  --voice-widget-status-border: rgba(255,255,255,0.1);
+  --voice-widget-status-text: #F9FAFB;
+  --voice-widget-orb-glow: rgba(6,182,212,0.18);
+  --voice-widget-orb-outline: rgba(255,255,255,0.08);
+  --voice-widget-typing: #fde68a;
+}
+body.light-mode {
+  --bg: #f2f2f2;
+  --card-bg: rgba(255,255,255,0.72);
+  --nav-bg: rgba(255,255,255,0.88);
+  --text: #121212;
+  --text-muted: rgba(18,18,18,0.62);
+  --border: rgba(0,0,0,0.07);
+  --border-gold: rgba(201, 168, 76, 0.3);
+  --glow: rgba(201, 168, 76, 0.22);
+  --sym-color: rgba(18,18,18,0.07);
+  --voice-widget-bg: rgba(255, 255, 255, 0.75);
+  --voice-widget-border: rgba(0, 0, 0, 0.08);
+  --voice-widget-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  --voice-widget-title: #111827;
+  --voice-widget-text: rgba(17,24,39,0.82);
+  --voice-widget-status-bg: rgba(255,255,255,0.72);
+  --voice-widget-status-border: rgba(0,0,0,0.08);
+  --voice-widget-status-text: #111827;
+  --voice-widget-orb-glow: rgba(6,182,212,0.12);
+  --voice-widget-orb-outline: rgba(0,0,0,0.06);
+  --voice-widget-typing: #92400e;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Heebo', sans-serif; }
+html { scroll-behavior: smooth; }
+body { background-color: var(--bg); color: var(--text); overflow-x: hidden; min-height: 100vh; }
+section { padding: 8rem 2rem; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; opacity: 0; transform: translateY(32px); transition: opacity 0.75s ease-out, transform 0.75s ease-out; }
+section.reveal { opacity: 1; transform: translateY(0); }
+::-webkit-scrollbar { width: 7px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--gold), #7a5a20); border-radius: 4px; }
+::placeholder { color: var(--text-muted) !important; opacity: 1; }
+
+/* ── NAV ─────────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; width: 100%;
+  background: var(--nav-bg);
+  z-index: 100; display: flex; justify-content: space-between; align-items: center;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid var(--border-gold);
+  transition: padding 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 30px rgba(0,0,0,0.6);
+}
+/* HAMBURGER & SIDEBAR */
+.hamburger {
+  display: flex; flex-direction: column; justify-content: space-between;
+  width: 30px; height: 21px; cursor: pointer; z-index: 1001; position: relative;
+}
+.hamburger span {
+  display: block; height: 3px; width: 100%; background: var(--gold);
+  border-radius: 3px; transition: all 0.3s ease;
+  box-shadow: 0 0 5px rgba(201,168,76,0.3);
+}
+.hamburger.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+.hamburger.active span:nth-child(2) { opacity: 0; }
+.hamburger.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+
+.sidebar-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+  background: rgba(0,0,0,0.6);
+  z-index: 999; opacity: 0; visibility: hidden; transition: all 0.3s ease;
+}
+.sidebar-overlay.active { opacity: 1; visibility: visible; }
+
+.sidebar-menu {
+  position: fixed; top: 0; left: -320px; width: 280px; height: 100vh;
+  background: var(--nav-bg); border-right: 1px solid var(--border-gold);
+  z-index: 1000; display: flex; flex-direction: column; padding: 6rem 2.5rem 2rem;
+  transition: left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: 5px 0 40px rgba(0,0,0,0.6);
+  gap: 2rem;
+}
+.sidebar-menu.active { left: 0; }
+
+.sidebar-menu a {
+  color: var(--text); text-decoration: none; font-weight: 600;
+  font-size: 1.4rem; transition: color 0.3s; cursor: pointer;
+  position: relative; align-self: flex-start;
+}
+.sidebar-menu a:hover, .sidebar-menu a.nav-active { color: var(--gold); text-shadow: 0 0 10px var(--glow); }
+.sidebar-menu a::after {
+  content: ''; position: absolute; bottom: -4px; left: 0;
+  width: 0; height: 2px; background: var(--gold);
+  border-radius: 1px; transition: width 0.3s ease;
+  box-shadow: 0 0 8px var(--glow);
+}
+.sidebar-menu a:hover::after, .sidebar-menu a.nav-active::after { width: 100%; }
+
+.sidebar-menu .theme-btn {
+  align-self: flex-start; margin-bottom: 1rem;
+}
+.sidebar-auth {
+  display: none;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border-gold);
+  width: 100%;
+}
+.sidebar-auth .btn {
+  width: 100%;
+  text-align: center;
+  font-size: 1rem;
+  padding: 0.85rem 1.2rem;
+}
+.sidebar-auth.is-hidden { display: none !important; }
+@media (max-width: 900px) {
+  .sidebar-auth:not(.is-hidden) { display: flex; }
+}
+
+.admin-hidden { display: none !important; }
+nav .logo {
+  color: var(--gold); font-weight: 800; font-size: 1.5rem;
+  letter-spacing: 1px; cursor: default !important;
+  text-shadow: 0 0 20px rgba(201,168,76,0.25);
+}
+
+/* ── GLASSMORPHISM ────────────────────────────────── */
+.glass {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 20px; padding: 2.5rem;
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), border-color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.glass:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 0 1px var(--border-gold);
+  border-color: var(--border-gold);
+}
+.no-hover:hover { transform: none !important; box-shadow: none !important; border-color: var(--border) !important; }
+
+/* ── FLOATING MATH BG ─────────────────────────────── */
+.math-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: -1; pointer-events: none; will-change: transform; }
+.sym { position: absolute; font-size: 2rem; color: var(--sym-color, rgba(201, 168, 76, 0.11)); animation: float linear infinite; font-weight: 300; will-change: transform; }
+@keyframes float {
+  0% { transform: translateY(110vh) rotate(0deg); }
+  50% { transform: translateY(45vh) rotate(180deg) translateX(15px); }
+  100% { transform: translateY(-20vh) rotate(360deg); }
+}
+
+/* ── TYPOGRAPHY ──────────────────────────────────── */
+h1 {
+  font-size: 4.5rem; font-weight: 800; text-align: center; position: relative;
+  margin-bottom: 1.5rem; opacity: 0;
+  background: linear-gradient(135deg, #fff 0%, var(--gold) 45%, #fff 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  background-size: 200% auto;
+  animation: slideDown 1s ease forwards, shimmer 5s linear 1s infinite;
+}
+@keyframes slideDown { from { transform: translateY(-30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes shimmer { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
+h1::after {
+  content: ''; position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%);
+  width: 100px; height: 3px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  border-radius: 2px;
+}
+h2 { font-size: 2.8rem; margin-bottom: 3rem; color: var(--gold); text-align: center; }
+
+/* ── BUTTONS ──────────────────────────────────────── */
+.btn {
+  background: linear-gradient(135deg, var(--gold) 0%, #a07828 100%);
+  color: #000; border: none; padding: 1.2rem 2.5rem;
+  font-size: 1.3rem; font-weight: 800; border-radius: 14px; cursor: pointer;
+  text-decoration: none; display: inline-block;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  position: relative; overflow: hidden;
+}
+.btn::before {
+  content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+  transition: left 0.5s ease;
+}
+.btn:hover::before { left: 100%; }
+.btn:hover {
+  background: linear-gradient(135deg, var(--yellow) 0%, var(--gold) 100%);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 35px rgba(0,0,0,0.35), 0 0 28px var(--glow);
+}
+.btn:active { transform: scale(0.97); }
+
+/* ── STATS ──────────────────────────────────────────── */
+.stats { display: flex; gap: 2.5rem; width: 100%; max-width: 1100px; margin-top: 4rem; opacity: 0; animation: slideUp 1s 0.5s ease forwards; }
+@keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.stats .glass { flex: 1; text-align: center; font-size: 1.4rem; font-weight: 600; }
+.stats .glass span { display: block; font-size: 3.5rem; color: var(--gold); margin-bottom: 1rem; text-shadow: 0 0 25px var(--glow); }
+
+/* ── FORM / BOOKING FLOW ──────────────────────────── */
+.form-container { width: 100%; max-width: 650px; position: relative; overflow: hidden; }
+.step { display: none; animation: fadeSlide .5s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+.step.active { display: block; }
+@keyframes fadeSlide { from { opacity: 0; transform: translateX(18px); } to { opacity: 1; transform: translateX(0); } }
+
+.input-group { margin-bottom: 2rem; text-align: right; }
+label { display: block; margin-bottom: 0.8rem; color: var(--text); font-size: 1.05rem; font-weight: 600; letter-spacing: 0.3px; }
+input, select, textarea {
+  width: 100%; padding: 1.2rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 14px; color: var(--text);
+  font-family: inherit; font-size: 1.1rem;
+  transition: border-color 0.3s, box-shadow 0.3s, background 0.3s; resize: vertical;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.14), 0 0 22px rgba(201,168,76,0.12);
+  background: rgba(201,168,76,0.04);
+}
+textarea { min-height: 120px; }
+select option { background: #1a1a1a; color: var(--text); }
+
+/* ── CHIPS ───────────────────────────────────────── */
+.chips { display: flex; flex-wrap: wrap; gap: 0.8rem; }
+.chip {
+  padding: 0.7rem 1.4rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 30px; cursor: pointer;
+  transition: all 0.25s ease;
+  font-size: 1rem; color: var(--text-muted);
+}
+.chip:hover {
+  background: rgba(201,168,76,0.1);
+  color: var(--gold); border-color: var(--border-gold);
+  transform: translateY(-1px);
+}
+.chip.selected {
+  background: linear-gradient(135deg, var(--gold), #a07828) !important;
+  color: #000 !important; border-color: var(--gold);
+  box-shadow: 0 4px 15px rgba(201,168,76,0.3);
+  font-weight: 700;
+}
+
+/* ── TIME SLOTS ──────────────────────────────────── */
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; }
+.time-slot {
+  padding: 1.2rem; text-align: center;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 14px; cursor: pointer; font-size: 1.2rem;
+  transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  color: var(--text); font-weight: 600;
+}
+.time-slot:hover {
+  border-color: var(--gold);
+  background: rgba(201,168,76,0.1);
+  transform: scale(1.07);
+  box-shadow: 0 0 22px rgba(201,168,76,0.2), inset 0 0 14px rgba(201,168,76,0.04);
+  color: var(--gold);
+}
+.time-slot.selected {
+  background: linear-gradient(135deg, var(--gold), #a07828) !important;
+  color: #000 !important; font-weight: 800;
+  box-shadow: 0 4px 22px var(--glow), 0 0 30px rgba(201,168,76,0.2);
+  border-color: var(--gold) !important; opacity: 1 !important;
+  transform: scale(1.06);
+}
+.time-slot.occupied, .time-slot.past {
+  background: rgba(255,255,255,0.02) !important;
+  color: rgba(255,255,255,0.15) !important; cursor: not-allowed !important;
+  border: 1px solid rgba(255,255,255,0.04) !important;
+  opacity: 0.22 !important; filter: grayscale(1); pointer-events: none !important;
+}
+
+body.light-mode .time-slot { background: rgba(255,255,255,0.8); border: 1px solid #ddd; color: #121212; }
+body.light-mode .time-slot:hover { background: rgba(201,168,76,0.07); border-color: var(--gold); }
+body.light-mode .time-slot.selected { background: linear-gradient(135deg,#c9a84c,#a07828) !important; color: #ffffff !important; box-shadow: 0 8px 25px rgba(201,168,76,0.4); border-color: #c9a84c !important; }
+body.light-mode .time-slot.occupied, body.light-mode .time-slot.past { background: #f0f0f0 !important; color: #ccc !important; border-color: #eee !important; filter: grayscale(1); }
+body.light-mode #bookingSummary span { color: #121212 !important; font-weight: 800 !important; }
+
+/* ── PROGRESS STEPPER ─────────────────────────────── */
+.progress {
+  display: flex; justify-content: space-between; margin-bottom: 3rem;
+  position: relative; align-items: center;
+}
+.progress::before {
+  content: ''; position: absolute; top: 50%; left: 0; right: 0;
+  height: 2px; background: var(--border); z-index: 0; transform: translateY(-50%);
+}
+.progress-fill {
+  position: absolute; top: 50%; left: 0; height: 2px;
+  background: linear-gradient(90deg, var(--gold), rgba(201,168,76,0.35));
+  z-index: 0; transform: translateY(-50%); transition: width 0.5s cubic-bezier(0.25,0.46,0.45,0.94);
+  box-shadow: 0 0 10px var(--glow); width: 0%;
+}
+.dot {
+  width: 46px; height: 46px;
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 1.1rem; transition: all 0.4s ease;
+  z-index: 1; cursor: pointer; color: var(--text-muted);
+}
+.dot:hover { border-color: var(--gold); transform: scale(1.12); color: var(--gold); }
+.dot.active {
+  border-color: var(--gold);
+  background: linear-gradient(135deg, var(--gold), #a07828);
+  color: #000 !important;
+  box-shadow: 0 0 25px var(--glow);
+  text-shadow: none; transform: scale(1.1);
+}
+
+/* ── ACTIONS ──────────────────────────────────────── */
+.actions { display: flex; justify-content: space-between; margin-top: 3rem; }
+.btn-sm { padding: 0.8rem 1.5rem; font-size: 1rem; }
+.btn-outline { background: transparent; border: 2px solid var(--gold); color: var(--gold); box-shadow: none; }
+.btn-outline:hover { background: rgba(201,168,76,0.08); color: var(--gold); box-shadow: 0 0 18px rgba(201,168,76,0.14); transform: translateY(-2px) scale(1.01); }
+.btn-danger { background: transparent; border: 2px solid #f87171; color: #f87171; box-shadow: none; }
+.btn-danger:hover { background: rgba(248,113,113,0.08); color: #f87171; box-shadow: 0 0 15px rgba(248,113,113,0.18); transform: translateY(-2px); }
+
+/* ── SCHEDULE LIST ───────────────────────────────── */
+.schedule-list { width: 100%; display: flex; flex-direction: column; gap: 1.2rem; }
+.schedule-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 1.4rem 1.8rem;
+  background: rgba(255,255,255,0.02);
+  border-radius: 16px; border: 1px solid var(--border); transition: all 0.3s ease;
+}
+.schedule-item.approved { background: rgba(74,222,128,0.04); border-color: rgba(74,222,128,0.18); }
+.schedule-item.cancelled { background: rgba(239,68,68,0.04); border-color: rgba(239,68,68,0.18); }
+.schedule-item:hover { border-color: var(--border-gold); background: rgba(201,168,76,0.03); }
+.schedule-info strong { font-size: 1.25rem; color: var(--text); display: block; margin-bottom: 0.4rem; }
+.schedule-info span { color: var(--text-muted); font-size: 1rem; }
+.badge {
+  padding: 0.4rem 1rem; border-radius: 30px; font-size: 0.85rem;
+  font-weight: 700; margin-left: 1rem; display: inline-block; letter-spacing: 0.5px;
+}
+.badge.ok { background: rgba(74,222,128,0.1); color: #4ade80; border: 1px solid rgba(74,222,128,0.25); }
+.badge.wait { background: rgba(251,191,36,0.1); color: #fbbf24; border: 1px solid rgba(251,191,36,0.25); }
+.badge.cancel { background: rgba(239,68,68,0.1); color: #f87171; border: 1px solid rgba(239,68,68,0.25); }
+
+/* ── AVAIL GRID ──────────────────────────────────── */
+.avail-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1rem; width: 100%; max-width: 1200px; }
+.avail-col h3 { text-align: center; margin-bottom: 1.2rem; font-size: 1.2rem; color: var(--text); border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+.avail-slot {
+  padding: 0.9rem; text-align: center; border-radius: 10px; cursor: pointer;
+  margin-bottom: 0.7rem; transition: all 0.25s ease;
+  background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2);
+  color: #f87171; font-weight: 600; font-size: 0.95rem;
+}
+.avail-slot.free { background: rgba(74,222,128,0.08); border-color: rgba(74,222,128,0.22); color: #4ade80; }
+.avail-slot:hover { transform: scale(1.06); filter: brightness(1.25); }
+.copy-btn {
+  background: none; border: 1px solid var(--border-gold); color: var(--gold);
+  padding: 0.35rem; font-size: 0.75rem; border-radius: 8px; cursor: pointer;
+  margin-top: 0.4rem; transition: all 0.25s ease; width: 100%;
+}
+.copy-btn:hover { background: rgba(201,168,76,0.1); }
+.avail-slot.booked { background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.3); color: #f87171; }
+
+.btn-mini { border-radius: 10px; padding: 0.5rem 0.9rem; font-size: 0.82rem; font-weight: 700; min-width: auto; }
+
+/* ── TOOLTIP ─────────────────────────────────────── */
+.slot-tooltip {
+  position: absolute;
+  background: rgba(14,14,14,0.98);
+  border: 1px solid var(--gold); padding: 0.8rem 1rem; border-radius: 12px;
+  z-index: 10002; display: none; pointer-events: none;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.5), 0 0 15px rgba(201,168,76,0.08);
+  min-width: 160px;
+}
+.slot-tooltip strong { color: var(--gold); display: block; margin-bottom: 0.2rem; }
+.slot-tooltip span { font-size: 0.85rem; color: var(--text-muted); }
+body.light-mode .slot-tooltip {
+  background: #f7f7f7 !important;
+  border: 1px solid var(--border-gold) !important;
+  color: #121212 !important;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.12), 0 0 14px rgba(201,168,76,0.12) !important;
+}
+body.light-mode .slot-tooltip strong { color: #1a1a1a !important; }
+body.light-mode .slot-tooltip span { color: #333333 !important; }
+
+/* ── FLATPICKR ────────────────────────────────────── */
+.flatpickr-calendar { background: rgba(16,16,16,0.99) !important; border: 1px solid var(--border-gold) !important; border-radius: 20px !important; box-shadow: 0 20px 50px rgba(0,0,0,0.55), 0 0 30px rgba(201,168,76,0.08) !important; font-family: 'Heebo', sans-serif !important; color: var(--text) !important; }
+.flatpickr-day { color: var(--text) !important; border-radius: 50% !important; transition: 0.2s; }
+.flatpickr-day.selected { background: linear-gradient(135deg, var(--gold), #a07828) !important; border-color: var(--gold) !important; color: #fff !important; font-weight: 800 !important; box-shadow: 0 0 15px var(--glow); }
+.flatpickr-day.today { border: 2px solid var(--gold) !important; color: var(--gold) !important; }
+.flatpickr-day:hover { background: rgba(201,168,76,0.12) !important; }
+.flatpickr-months .flatpickr-month { color: var(--text) !important; fill: var(--text) !important; }
+.flatpickr-current-month .flatpickr-monthDropdown-months { background: rgba(16,16,16,0.9) !important; color: var(--text) !important; }
+.flatpickr-weekdays { background: transparent !important; }
+.flatpickr-weekday { color: var(--gold) !important; font-weight: 600 !important; }
+.flatpickr-innerContainer { padding: 12px !important; }
+.flatpickr-months .flatpickr-prev-month, .flatpickr-months .flatpickr-next-month { padding: 10px !important; }
+.flatpickr-months .flatpickr-prev-month svg, .flatpickr-months .flatpickr-next-month svg { fill: var(--gold) !important; width: 14px; height: 14px; }
+/* Light-mode flatpickr (overrides dark.css theme) */
+body.light-mode .flatpickr-calendar,
+body.light-mode .flatpickr-calendar.dark {
+  background: #ffffff !important;
+  color: #121212 !important;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.12), 0 0 24px rgba(201,168,76,0.14) !important;
+}
+body.light-mode .flatpickr-months,
+body.light-mode .flatpickr-months .flatpickr-month {
+  background: #ffffff !important;
+  color: #121212 !important;
+  fill: #121212 !important;
+}
+body.light-mode .flatpickr-current-month .flatpickr-monthDropdown-months,
+body.light-mode .flatpickr-current-month input.cur-year,
+body.light-mode .numInputWrapper span.arrowUp:after,
+body.light-mode .numInputWrapper span.arrowDown:after {
+  background: #f5f5f5 !important;
+  color: #121212 !important;
+  fill: #121212 !important;
+}
+body.light-mode .flatpickr-day {
+  color: #121212 !important;
+}
+body.light-mode .flatpickr-day.prevMonthDay,
+body.light-mode .flatpickr-day.nextMonthDay,
+body.light-mode .flatpickr-day.flatpickr-disabled {
+  color: rgba(0,0,0,0.28) !important;
+}
+body.light-mode .flatpickr-day.today {
+  color: #8a6a1e !important;
+  border-color: var(--gold) !important;
+}
+body.light-mode .flatpickr-day:hover {
+  background: rgba(201,168,76,0.14) !important;
+}
+body.light-mode .flatpickr-day.selected {
+  color: #ffffff !important;
+}
+body.light-mode .flatpickr-weekday {
+  color: #8a6a1e !important;
+}
+body.light-mode .flatpickr-months .flatpickr-prev-month svg,
+body.light-mode .flatpickr-months .flatpickr-next-month svg {
+  fill: var(--gold) !important;
+}
+body.light-mode .flatpickr-current-month .numInputWrapper span,
+body.light-mode .flatpickr-current-month .flatpickr-monthDropdown-months option {
+  color: #121212 !important;
+  background: #ffffff !important;
+}
+body.light-mode span.flatpickr-weekday {
+  background: transparent !important;
+  color: #8a6a1e !important;
+}
+body.light-mode .flatpickr-days,
+body.light-mode .flatpickr-dayContainer,
+body.light-mode .flatpickr-innerContainer,
+body.light-mode .flatpickr-rContainer {
+  background: #ffffff !important;
+}
+body.light-mode .flatpickr-calendar .flatpickr-day,
+body.light-mode .flatpickr-calendar.dark .flatpickr-day {
+  color: #121212 !important;
+}
+body.light-mode .flatpickr-current-month,
+body.light-mode .flatpickr-current-month .flatpickr-monthDropdown-months,
+body.light-mode .flatpickr-current-month input.cur-year {
+  color: #121212 !important;
+}
+
+/* ── INPUT WRAPPER WITH ICON ─────────────────────── */
+.input-wrapper { position: relative; width: 100%; display: flex; align-items: center; }
+.input-wrapper input { padding-right: 3.5rem !important; }
+.input-icon { position: absolute; right: 1.2rem; width: 20px; height: 20px; stroke: var(--gold); fill: none; pointer-events: none; opacity: 0.7; }
+
+/* ── PREMIUM TOAST – top center ──────────────────── */
+#toast-container {
+  position: fixed; top: 5.2rem; left: 50%; transform: translateX(-50%);
+  z-index: 10001; display: flex; flex-direction: column; align-items: center;
+  gap: 0.6rem; pointer-events: none;
+}
+.toast {
+  background: rgba(10,10,10,0.97);
+  border: 1px solid var(--border-gold); color: var(--text);
+  padding: 0.85rem 2rem; border-radius: 50px;
+  font-size: 0.95rem; font-weight: 600; display: flex; align-items: center; gap: 0.75rem;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.55), 0 0 22px rgba(201,168,76,0.08);
+  animation: toastIn 0.45s cubic-bezier(0.18,0.89,0.32,1.28) forwards, toastOut 0.4s 2.9s ease forwards;
+  white-space: nowrap;
+  border-bottom: 2px solid var(--gold);
+}
+body.light-mode .toast {
+  background: #ffffff;
+  color: #111111;
+  border-color: var(--border-gold);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12), 0 0 14px rgba(201,168,76,0.18);
+}
+/* ── PREMIUM CONFIRM MODAL ───────────────────────── */
+#confirm-modal {
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.82);
+  z-index: 10005; display: none; align-items: center; justify-content: center;
+}
+.confirm-box {
+  background: rgba(14,14,14,0.99);
+  border: 1px solid var(--border-gold);
+  border-bottom: 2px solid var(--gold);
+  border-radius: 22px;
+  padding: 2.2rem 2.5rem;
+  max-width: 420px; width: 90%;
+  text-align: center;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.65), 0 0 30px rgba(201,168,76,0.08);
+  animation: confirmIn 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+body.light-mode .confirm-box {
+  background: #ffffff;
+  color: #111111;
+  box-shadow: 0 16px 50px rgba(0,0,0,0.14), 0 0 20px rgba(201,168,76,0.12);
+}
+body.light-mode #confirm-msg { color: #111111; }
+body.light-mode #student-auth-modal .confirm-box label,
+body.light-mode #student-auth-modal .confirm-box p { color: #333333; }
+@keyframes confirmIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+#confirm-msg {
+  font-size: 1.1rem; color: var(--text); margin-bottom: 1.8rem;
+  line-height: 1.7; font-weight: 500;
+}
+.confirm-actions { display: flex; gap: 1rem; justify-content: center; }
+.toast-icon {
+  width: 22px; height: 22px;
+  background: linear-gradient(135deg, var(--gold), #a07828);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem; color: #000; flex-shrink: 0; font-weight: 900;
+}
+@keyframes toastIn { from { transform: translateY(-22px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes toastOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-16px); } }
+
+/* ── PREMIUM LESSON TICKETS ──────────────────────── */
+.lesson-ticket {
+  position: relative; display: flex; align-items: stretch;
+  border-radius: 16px; overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+.lesson-ticket.approved {
+  background: rgba(20,17,8,0.72);
+  border: 1.5px solid rgba(201,168,76,0.45);
+  box-shadow: 0 4px 24px rgba(201,168,76,0.07), inset 0 0 30px rgba(201,168,76,0.02);
+}
+.lesson-ticket.pending {
+  background: rgba(18,15,6,0.68);
+  border: 1.5px dashed rgba(251,191,36,0.38);
+}
+.lesson-ticket.cancelled {
+  background: rgba(14,10,10,0.62);
+  border: 1px solid rgba(239,68,68,0.22);
+  opacity: 0.72;
+}
+.lesson-ticket:hover { transform: translateY(-3px); box-shadow: 0 14px 35px rgba(0,0,0,0.45); }
+.ticket-stripe { width: 5px; flex-shrink: 0; }
+.lesson-ticket.approved .ticket-stripe { background: linear-gradient(180deg, var(--gold), #7a5a20); }
+.lesson-ticket.pending .ticket-stripe { background: repeating-linear-gradient(180deg, #fbbf24 0, #fbbf24 7px, transparent 7px, transparent 13px); }
+.lesson-ticket.cancelled .ticket-stripe { background: #f87171; }
+.ticket-body {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 1.25rem 1.5rem; flex: 1; gap: 1.2rem;
+}
+.ticket-left { display: flex; flex-direction: column; gap: 0.2rem; min-width: 85px; }
+.ticket-date { font-size: 0.85rem; color: var(--text-muted); letter-spacing: 0.3px; }
+.ticket-time { font-size: 1.65rem; font-weight: 800; color: var(--gold); text-shadow: 0 0 18px rgba(201,168,76,0.28); line-height: 1.1; }
+.ticket-divider { width: 1px; align-self: stretch; background: var(--border); margin: 0 0.4rem; }
+.ticket-right { flex: 1; display: flex; flex-direction: column; gap: 0.3rem; text-align: right; }
+.ticket-topic { font-size: 1rem; font-weight: 700; color: var(--text); }
+.ticket-grade { font-size: 0.85rem; color: var(--text-muted); }
+.ticket-badge-wrap { display: flex; align-items: center; flex-shrink: 0; }
+.ticket-footer { padding: 0.55rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: flex-end; }
+.cancel-lesson-btn { font-size: 0.78rem; color: rgba(248,113,113,0.7); background: none; border: none; cursor: pointer; transition: color 0.2s; letter-spacing: 0.2px; padding: 0; }
+.cancel-lesson-btn:hover { color: #f87171; }
+
+/* ── RESPONSIVE ──────────────────────────────────── */
+@media (max-width: 900px) {
+  h1 { font-size: 3rem; }
+  .stats { flex-direction: column; }
+  .avail-grid { grid-template-columns: 1fr; overflow-x: auto; gap: 2rem; }
+  nav { padding: 1rem 1.5rem; }
+  nav .logo { font-size: 1.2rem; margin-bottom: 0.2rem; }
+  .schedule-item { flex-direction: column; align-items: flex-start; gap: 1.5rem; }
+  .ticket-body { flex-wrap: wrap; }
+  .ticket-divider { display: none; }
+}
+
+/* ── MOBILE (max 600px) ──────────────────────────── */
+@media (max-width: 600px) {
+  section { padding: 5rem 1.2rem; }
+
+  h1 { font-size: 2.2rem; }
+  h2 { font-size: 1.9rem; margin-bottom: 2rem; }
+
+  .btn {
+    font-size: 1rem; padding: 0.95rem 1.6rem;
+    white-space: normal; word-break: keep-all;
+  }
+  .btn-sm { font-size: 0.88rem; padding: 0.7rem 1.1rem; }
+
+  .glass { padding: 1.5rem 1.2rem; }
+
+  input, select, textarea { font-size: 1rem; padding: 1rem; }
+  label { font-size: 0.95rem; }
+
+  .stats { gap: 1.2rem; margin-top: 2.5rem; }
+  .stats .glass span { font-size: 2.5rem; }
+  .stats .glass { font-size: 1.1rem; padding: 1.2rem; }
+
+  .bar-ilan-badge { font-size: 0.95rem; padding: 6px 18px; }
+
+  .progress { margin-bottom: 2rem; }
+  .dot { width: 36px; height: 36px; font-size: 0.95rem; }
+
+  .chips { gap: 0.6rem; }
+  .chip { padding: 0.55rem 1rem; font-size: 0.9rem; }
+
+  .grid { grid-template-columns: repeat(3, 1fr); gap: 0.7rem; }
+  .time-slot { padding: 0.9rem 0.5rem; font-size: 1rem; }
+
+  .ticket-body { padding: 1rem; gap: 0.8rem; }
+  .ticket-time { font-size: 1.3rem; }
+
+  .actions { flex-wrap: wrap; gap: 0.8rem; justify-content: center !important; }
+  .actions .btn { flex: 1; min-width: 120px; text-align: center; }
+
+  .auth-btn-row { flex-direction: column; }
+  .auth-btn-row .btn { width: 100%; }
+
+  #profileSummaryBar { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+
+  #my-lessons .glass { padding: 1.2rem 1rem; }
+}
+
+/* ── THEME TOGGLE ────────────────────────────────── */
+.theme-btn {
+  background: none; border: 1px solid var(--border-gold); color: var(--gold);
+  cursor: pointer; transition: all 0.3s ease; padding: 0;
+  display: flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; border-radius: 50%;
+}
+.theme-btn:hover { background: rgba(201,168,76,0.1); transform: scale(1.1) rotate(15deg); }
+.theme-btn svg { width: 18px; height: 18px; stroke: var(--gold); stroke-width: 2.5; }
+
+/* ── AUTH MODAL ──────────────────────────────────── */
+#auth-modal {
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.88);
+  z-index: 1000; display: none; align-items: center; justify-content: center;
+}
+#auth-modal .glass {
+  max-width: 400px; width: 90%; text-align: center;
+  transition: none !important;
+  background: rgba(14,14,14,0.99) !important;
+  border: 1.5px solid var(--border-gold);
+  border-radius: 22px;
+}
+#auth-modal input {
+  transition: none !important; box-shadow: none !important;
+  background: rgba(255,255,255,0.04) !important;
+  border: 1px solid var(--border); border-radius: 10px;
+  color: var(--text); padding: 1rem; margin-bottom: 1rem;
+}
+#auth-modal input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.12) !important; }
+#auth-modal .btn-cancel { background: transparent; border: 1px solid var(--border-gold); color: var(--gold); margin-top: 0.5rem; }
+/* Light-mode admin modal */
+body.light-mode #auth-modal .glass {
+  background: #ffffff !important;
+  border-color: var(--border-gold);
+  box-shadow: 0 16px 50px rgba(0,0,0,0.12);
+}
+body.light-mode #auth-modal h3 { color: #111111; }
+body.light-mode #auth-modal input {
+  background: #f5f5f5 !important;
+  border-color: rgba(0,0,0,0.18) !important;
+  color: #111111 !important;
+}
+body.light-mode #auth-modal input::placeholder { color: rgba(0,0,0,0.4); }
+
+/* ── FLOATING CONTACT ────────────────────────────── */
+#floatingContact {
+  position: fixed; bottom: 1.6rem; left: 1.6rem;
+  z-index: 999;
+  background: rgba(12,12,12,0.96);
+  border: 1px solid var(--border-gold);
+  border-radius: 50px;
+  padding: 0.65rem 1.2rem;
+  display: flex; align-items: center; gap: 0.7rem;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.45), 0 0 18px rgba(201,168,76,0.08);
+  transition: box-shadow 0.3s, transform 0.3s, border-color 0.3s;
+  cursor: pointer;
+  text-decoration: none;
+}
+#floatingContact:hover {
+  box-shadow: 0 10px 40px rgba(0,0,0,0.55), 0 0 30px rgba(201,168,76,0.28);
+  border-color: rgba(201,168,76,0.55);
+  transform: translateY(-3px) scale(1.03);
+}
+#floatingContact .fc-label {
+  font-size: 0.82rem; color: #e0e0e0; font-weight: 500; white-space: nowrap;
+}
+#floatingContact .fc-number {
+  font-size: 0.95rem; font-weight: 800; color: #f0f0f0; letter-spacing: 0.5px; white-space: nowrap;
+}
+/* Light mode overrides for floating contact */
+body.light-mode #floatingContact {
+  background: #ffffff;
+  border-color: rgba(201,168,76,0.45);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.1), 0 0 16px rgba(201,168,76,0.18);
+}
+body.light-mode #floatingContact .fc-label { color: #111111 !important; }
+body.light-mode #floatingContact .fc-number { color: #111111 !important; }
+body.light-mode #floatingContact .fc-copy svg { fill: #1a6b35; }
+
+#floatingContact .fc-copy {
+  background: none; border: none; cursor: pointer; padding: 4px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 6px; transition: background 0.2s;
+  flex-shrink: 0;
+}
+#floatingContact .fc-copy:hover { background: rgba(201,168,76,0.15); }
+#floatingContact .fc-copy svg { width: 16px; height: 16px; fill: var(--gold); stroke: none; }
+@media (max-width: 900px) {
+  #floatingContact {
+    bottom: 1rem; left: 50%; transform: translateX(-50%);
+    padding: 0.55rem 1rem;
+  }
+  #floatingContact:hover { transform: translateX(-50%) translateY(-2px); }
+  #floatingContact .fc-label { display: none; }
+}
+
+/* ── NAV AUTH BUTTONS ────────────────────────────── */
+.nav-auth { display: flex; align-items: center; gap: 0.6rem; }
+.nav-auth .btn { padding: 0.45rem 1rem; font-size: 0.82rem; border-radius: 10px; }
+#navUserChip {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--gold);
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0.35rem 0.8rem;
+  border: 1px solid var(--border-gold);
+  border-radius: 20px;
+  transition: background 0.2s;
+}
+#navUserChip:hover { background: rgba(201,168,76,0.08); }
+.student-auth-shell { display: flex; flex-direction: column; gap: 1rem; }
+.student-auth-status {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.1rem;
+  border-radius: 16px;
+  border: 1px solid var(--border-gold);
+  background: rgba(201,168,76,0.08);
+}
+.student-auth-status .meta { display: flex; flex-direction: column; gap: 0.2rem; }
+.student-auth-status .meta span { color: var(--text-muted); font-size: 0.9rem; }
+.student-auth-status .meta strong { color: var(--gold); font-size: 1.05rem; }
+.google-auth-btn { display:flex; align-items:center; justify-content:center; gap:0.7rem; width:100%; }
+.google-auth-btn svg { width:18px; height:18px; }
+@media (max-width: 900px) { .nav-auth { display: none; } }
+
+/* ── VOICE ASSISTANT ─────────────────────────────── */
+.voice-assistant-fab {
+  position: fixed;
+  right: 1.1rem;
+  bottom: 6.2rem;
+  z-index: 10006;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--border-gold);
+  background: var(--voice-widget-bg);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 0 20px rgba(0, 150, 255, 0.4), var(--voice-widget-shadow);
+  color: var(--voice-widget-text);
+  cursor: pointer;
+  user-select: none;
+  overflow: hidden;
+  animation: voiceAssistantFabPulse 2.8s ease-in-out infinite;
+}
+.voice-assistant-fab:hover { transform: translateY(-2px) scale(1.02); }
+.voice-assistant-fab:active { transform: translateY(0) scale(0.98); }
+.voice-assistant-fab.guest-restricted::after {
+  content: '🔒';
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(255,255,255,0.12);
+  font-size: 11px;
+  line-height: 1;
+  pointer-events: none;
+}
+.voice-assistant-status {
+  position: static;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  padding: 0.18rem 0.5rem;
+  border-radius: 999px;
+  background: var(--voice-widget-status-bg);
+  border: 1px solid var(--voice-widget-status-border);
+  color: var(--voice-widget-status-text);
+  font-size: 0.64rem;
+  line-height: 1;
+  width: fit-content;
+  max-width: 100%;
+  white-space: nowrap;
+}
+.voice-assistant-status.active { display: flex; }
+.voice-assistant-status[data-state="listening"] { color: #7dd3fc; }
+.voice-assistant-status[data-state="processing"] { color: #fbbf24; }
+.voice-assistant-status[data-state="busy"] { color: #f87171; }
+.voice-assistant-status[data-state="typing"] { color: var(--voice-widget-typing); }
+.voice-assistant-visual {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  background: radial-gradient(circle at 30% 30%, var(--voice-widget-orb-glow), rgba(124,58,237,0.14), rgba(0,0,0,0.08));
+  box-shadow: inset 0 0 16px rgba(255,255,255,0.08), 0 0 18px var(--voice-widget-orb-glow);
+}
+
+/* ── TASKS ───────────────────────────────────────── */
+#taskModal {
+  position: fixed; inset: 0; z-index: 10020; display: none;
+  align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.78);
+}
+#taskModal .task-box {
+  width: min(560px, 92vw);
+  background: var(--card-bg);
+  border: 1px solid var(--border-gold);
+  border-radius: 22px;
+  padding: 1.6rem;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.45);
+}
+#taskModal .task-box h3 { color: var(--gold); margin-bottom: 1rem; }
+#taskModal .task-box .input-group { margin-bottom: 1rem; }
+#taskModal .task-box textarea { min-height: 120px; }
+#taskModal .task-actions { display:flex; gap:0.8rem; justify-content:flex-start; flex-wrap:wrap; }
+#taskModal .task-hint { font-size: 0.82rem; color: var(--text-muted); margin-top: 0.35rem; }
+#taskModal .task-file-name { font-size: 0.82rem; color: var(--gold); margin-top: 0.35rem; word-break: break-word; }
+.task-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1rem 1.1rem;
+  display:flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+.task-card strong { color: var(--gold); font-size: 1.05rem; }
+.task-card .task-meta { color: var(--text-muted); font-size: 0.85rem; }
+.task-card .task-desc { color: var(--text); line-height: 1.6; white-space: pre-wrap; }
+.task-card .task-actions-row { display:flex; gap:0.7rem; flex-wrap:wrap; }
+.task-card.completed { opacity: 0.72; border-color: rgba(74,222,128,0.28); }
+.voice-assistant-visual::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid var(--voice-widget-orb-outline);
+  pointer-events: none;
+}
+.voice-assistant-canvas {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+body.light-mode .voice-assistant-fab {
+  border-color: var(--voice-widget-border);
+}
+body.light-mode .voice-assistant-fab {
+  background: var(--voice-widget-bg);
+}
+body.light-mode .voice-assistant-visual {
+  box-shadow: inset 0 0 16px rgba(255,255,255,0.55), 0 0 20px rgba(6,182,212,0.14);
+}
+body.light-mode .voice-assistant-canvas {
+  filter: saturate(1.08) brightness(1.02);
+}
+.voice-assistant-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10019;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 0 1rem 7.25rem 1rem;
+  background: rgba(10,10,10,0.12);
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.voice-assistant-overlay::before,
+.voice-assistant-overlay::after {
+  content: '';
+  position: absolute;
+  inset: auto;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  filter: blur(18px);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(6,182,212,0.22) 0%, rgba(124,58,237,0.12) 38%, rgba(0,0,0,0) 72%);
+}
+.voice-assistant-overlay::before {
+  width: 320px;
+  height: 190px;
+  right: 22px;
+  bottom: 112px;
+  transform: rotate(-12deg);
+}
+.voice-assistant-overlay::after {
+  width: 260px;
+  height: 150px;
+  right: 58px;
+  bottom: 70px;
+  background: radial-gradient(circle, rgba(255,255,255,0.16) 0%, rgba(6,182,212,0.12) 36%, rgba(0,0,0,0) 74%);
+  transform: rotate(8deg);
+}
+.voice-assistant-overlay.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+.voice-assistant-overlay.active::before,
+.voice-assistant-overlay.active::after {
+  opacity: 1;
+}
+.voice-assistant-modal {
+  width: min(340px, 92vw);
+  max-height: min(480px, 72vh);
+  border-radius: 24px;
+  padding: 0.9rem;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(20, 20, 20, 0.85);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 18px 48px rgba(0,0,0,0.34);
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  position: relative;
+  overflow: hidden;
+}
+.voice-assistant-modal-head {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 0.75rem;
+}
+.voice-assistant-modal-title {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  flex:1;
+  gap:0.2rem;
+  text-align:center;
+}
+.voice-assistant-modal-title strong { color: var(--voice-widget-title); font-size: 1rem; }
+.voice-assistant-close {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 0;
+  background: rgba(255,255,255,0.08);
+  color: var(--voice-widget-status-text);
+  font-size: 1.3rem;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+}
+.voice-assistant-center {
+  flex: 1 1 auto;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap: 0.7rem;
+  padding: 0.4rem 0 0.1rem;
+  min-height: 0;
+}
+.voice-assistant-center .voice-assistant-visual {
+  width: 90px;
+  height: 90px;
+  max-width: 90px;
+  max-height: 90px;
+  box-shadow: inset 0 0 18px rgba(255,255,255,0.08), 0 18px 34px rgba(0,0,0,0.26), 0 0 22px var(--voice-widget-orb-glow);
+}
+.voice-assistant-modal-response {
+  width: min(100%, 520px);
+  min-height: 42px;
+  padding: 0.7rem 0.85rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.06);
+  color: var(--voice-widget-text);
+  line-height: 1.45;
+  white-space: pre-wrap;
+  text-align: right;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.14);
+}
+.voice-assistant-bottom {
+  display:flex;
+  flex-direction:column;
+  gap: 0.45rem;
+  margin-top: auto;
+}
+.voice-assistant-separator {
+  display:flex;
+  align-items:center;
+  gap:0.6rem;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+.voice-assistant-separator::before,
+.voice-assistant-separator::after {
+  content:'';
+  flex:1;
+  height:1px;
+  background: rgba(255,255,255,0.08);
+}
+.voice-assistant-entry {
+  width:100%;
+  display:flex;
+  gap:0.45rem;
+  align-items:center;
+  padding: 0.35rem;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.11);
+  border: 1px solid rgba(255,255,255,0.12);
+  backdrop-filter: blur(12px);
+}
+.voice-assistant-entry input {
+  flex:1;
+  min-width:0;
+  direction: rtl;
+  background: transparent;
+  border: 0;
+  color: var(--voice-widget-text);
+  padding: 0.65rem 0.75rem;
+  box-shadow: none;
+}
+.voice-assistant-entry input::placeholder {
+  color: rgba(255,255,255,0.75);
+}
+.voice-assistant-mic-btn {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  border-radius: 50%;
+  border: 0;
+  background: rgba(6,182,212,0.2);
+  color: #fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  box-shadow: 0 0 18px rgba(6,182,212,0.24);
+}
+.voice-assistant-mic-btn svg {
+  width: 16px;
+  height: 16px;
+}
+.voice-assistant-mic-btn:hover { transform: scale(1.04); }
+.voice-assistant-input-send {
+  border-radius: 14px;
+  white-space: nowrap;
+  padding: 0.65rem 0.85rem;
+}
+@keyframes voiceAssistantFabPulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(0, 150, 255, 0.35), var(--voice-widget-shadow); }
+  50% { box-shadow: 0 0 28px rgba(0, 150, 255, 0.56), var(--voice-widget-shadow); }
+}
+body.light-mode .voice-assistant-modal-response,
+body.light-mode .voice-assistant-modal {
+  border-color: rgba(0,0,0,0.08);
+}
+body.light-mode .voice-assistant-modal {
+  background: rgba(255,255,255,0.82);
+  border-color: rgba(0,0,0,0.08);
+}
+body.light-mode .voice-assistant-modal-response {
+  background: rgba(255,255,255,0.78);
+  color: #111827;
+}
+body.light-mode .voice-assistant-overlay {
+  background: rgba(10,10,10,0.08);
+}
+body.light-mode .voice-assistant-entry {
+  background: rgba(255,255,255,0.75);
+  border-color: rgba(0,0,0,0.08);
+}
+body.light-mode .voice-assistant-entry input {
+  color: #111827;
+}
+body.light-mode .voice-assistant-entry input::placeholder {
+  color: rgba(17,24,39,0.52);
+}
+body.light-mode .voice-assistant-mic-btn {
+  background: rgba(6,182,212,0.16);
+  color: #111827;
+}
+body.light-mode .voice-assistant-separator::before,
+body.light-mode .voice-assistant-separator::after {
+  background: rgba(0,0,0,0.08);
+}
+@media (max-width: 600px) {
+  .voice-assistant-fab { right: 0.75rem; bottom: 5.8rem; width: 56px; height: 56px; }
+  .voice-assistant-overlay { padding: 0 0.75rem 6.6rem 0.75rem; }
+  .voice-assistant-modal { width: min(340px, 92vw); max-height: min(460px, 72vh); padding: 0.8rem; }
+  .voice-assistant-center .voice-assistant-visual { width: 90px; height: 90px; }
+  .voice-assistant-entry { flex-wrap: wrap; }
+  .voice-assistant-entry input { width: 100%; order: 1; }
+  .voice-assistant-mic-btn { order: 2; }
+  .voice-assistant-input-send { order: 3; width: 100%; }
+}
+
+/* Mobile user icon (visible on small screens only) */
+.mobile-user-icon {
+  display: none; /* hidden on desktop by default */
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border-gold);
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+}
+.mobile-user-icon svg { width: 18px; height: 18px; fill: var(--text-muted); }
+@media (max-width: 768px) {
+  /* show only on small screens and position near the left-side hamburger */
+  .hamburger {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1001;
+  }
+  .mobile-user-icon {
+    display: flex;
+    position: absolute;
+    left: 56px; /* small gap to the right of the hamburger */
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1001;
+  }
+  /* keep logo aligned to the far right (RTL) and avoid shifting desktop layout */
+  nav { position: relative; padding: 1.2rem 1rem; height: 72px; align-items: center; }
+  .logo { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); }
+}
+
+/* ── PROFILE SUMMARY BAR (step 1) ────────────────── */
+#profileSummaryBar {
+  background: rgba(201,168,76,0.07); border: 1px solid var(--border-gold);
+  border-radius: 12px; padding: 0.9rem 1.4rem; margin-bottom: 1.5rem;
+  display: none; align-items: center; justify-content: space-between; gap: 1rem;
+}
+#profileSummaryBar .psb-name { color: var(--gold); font-weight: 800; }
+#profileSummaryBar .psb-phone { color: var(--text-muted); font-size: 0.85rem; }
+
+/* ── STUDENT AUTH MODAL ──────────────────────────── */
+#student-auth-modal {
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.82);
+  z-index: 10005; display: none; align-items: center; justify-content: center;
+}
+
+/* ── AUTH SCREEN ─────────────────────────────────── */
+#authButtons { text-align: center; }
+.auth-btn-row { display: flex; gap: 1rem; margin-top: 0.5rem; }
+.auth-btn-row .btn { flex: 1; }
+.auth-back-btn {
+  width: 100%; margin-top: 0.6rem;
+  font-size: 0.85rem; opacity: 0.65;
+}
+#loggedInChip {
+  background: rgba(201,168,76,0.07);
+  border: 1px solid var(--border-gold);
+  border-radius: 14px; padding: 1.1rem 1.5rem;
+  margin-bottom: 1.5rem; display: none;
+  align-items: center; justify-content: space-between; gap: 1rem;
+  animation: fadeSlide 0.4s ease;
+}
+.profile-chip-name { color: var(--gold); font-weight: 800; font-size: 1.05rem; }
+.profile-chip-phone { color: var(--text-muted); font-size: 0.85rem; margin-top: 0.2rem; }
+input.field-locked {
+  border-color: var(--border-gold) !important;
+  background: rgba(201,168,76,0.04) !important;
+  color: var(--gold) !important; cursor: default;
+}
+.unlock-link {
+  font-size: 0.78rem; color: var(--text-muted); cursor: pointer;
+  text-decoration: underline; margin-top: 0.3rem; display: inline-block;
+  transition: color 0.2s;
+}
+.unlock-link:hover { color: var(--gold); }
+
+/* ── STUDENT AREA ENHANCEMENTS ───────────────────── */
+#welcomeBanner {
+  background: rgba(201,168,76,0.07);
+  border: 1px solid var(--border-gold);
+  border-radius: 14px; padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem; display: none;
+  text-align: center; animation: fadeSlide 0.5s ease;
+}
+.welcome-name { color: var(--gold); font-weight: 800; }
+.badge-soon {
+  background: linear-gradient(135deg, var(--gold), #a07828);
+  color: #000; font-size: 0.72rem; font-weight: 800;
+  padding: 0.18rem 0.65rem; border-radius: 20px;
+  letter-spacing: 0.5px; vertical-align: middle;
+  margin-left: 0.4rem; display: inline-block;
+}
+.lesson-ticket.upcoming {
+  border: 1.5px solid rgba(201,168,76,0.6) !important;
+  box-shadow: 0 0 22px rgba(201,168,76,0.12) !important;
+}
+.gcal-link {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  font-size: 0.76rem; color: var(--gold); text-decoration: none;
+  font-weight: 600; padding: 0.28rem 0.65rem;
+  border: 1px solid var(--border-gold); border-radius: 20px;
+  transition: background 0.2s; margin-top: 0.5rem; white-space: nowrap;
+}
+.gcal-link:hover { background: rgba(201,168,76,0.1); }
+.btn-whatsapp {
+  background: linear-gradient(135deg, #25D366, #128C7E) !important;
+  color: #fff !important; display: flex; align-items: center;
+  justify-content: center; gap: 0.6rem;
+}
+.btn-whatsapp:hover {
+  background: linear-gradient(135deg, #2eef72, #25D366) !important;
+  box-shadow: 0 8px 28px rgba(37,211,102,0.3) !important;
+  transform: translateY(-3px) scale(1.02) !important;
+}
+
+/* ── BAR-ILAN BADGE ──────────────────────────────── */
+.bar-ilan-badge {
+  background: rgba(201,168,76,0.07);
+  border: 1px solid rgba(201,168,76,0.32);
+  color: var(--gold); padding: 7px 26px; border-radius: 50px;
+  font-weight: 600; margin-top: 1.5rem; display: inline-block;
+  box-shadow: 0 0 22px rgba(201,168,76,0.12);
+  animation: slideDown 1s 0.2s ease forwards; opacity: 0; font-size: 1.15rem;
+}
+</style>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<nav id="navbar">
+    <div style="display:flex; align-items:center; gap:1.2rem;">
+    <div class="logo" id="adminTrigger">גבאי מתמטיקה</div>
+    <div class="nav-auth" id="navAuth">
+        <div id="navAuthButtons" style="display:flex; gap:0.6rem;">
+            <button class="btn btn-outline nav-auth-btn" onclick="navShowStudentAuth()">התחברות עם Google</button>
+        </div>
+        <div id="navUserChip" onclick="closeMenuAndOpenStudentArea()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            <span id="navUserName"></span>
+        </div>
+    </div>
+    </div>
+    <div id="mobileUserIcon" class="mobile-user-icon" onclick="closeMenu(); navShowStudentAuth();" title="התחברות">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4" fill="currentColor"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" fill="currentColor"/></svg>
+    </div>
+    <div class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </div>
+    <div class="sidebar-menu" id="sidebarMenu">
+        <button id="themeToggle" class="theme-btn" onclick="toggleTheme()"></button>
+        <a href="#hero" onclick="closeMenuAndLogoutAdmin()" id="navHome">ראשי</a>
+        <a href="#book" onclick="closeMenuAndLogoutAdmin()" id="navBook">קביעת שיעור</a>
+        <a href="javascript:void(0)" onclick="closeMenuAndOpenStudentArea()" id="navLessons">השיעורים שלי</a>
+        <a href="javascript:void(0)" onclick="sidebarLogout()" id="navLogout" style="display:none; color:#f87171;">התנתק</a>
+        <div class="sidebar-auth" id="sidebarAuthButtons">
+          <button class="btn btn-outline" onclick="navShowStudentAuth()">התחברות עם Google</button>
+        </div>
+    </div>
+    <motion class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMenu()"></motion>
+</nav>
+
+<section id="hero" style="overflow: hidden;">
+    <h1>שיעורי מתמטיקה פרטיים</h1>
+    <div class="bar-ilan-badge">בוגר תוכנית בר-אילן</div>
+    <p style="font-size: 1.8rem; margin-top: 2rem; text-align: center; color: var(--text); opacity: 1 !important; animation: slideDown 1s 0.3s ease forwards;">הדרך להצלחה בבגרות מתחילה כאן.</p>
+
+    <a href="#book" class="btn" style="margin-top: 2.5rem; opacity: 0; animation: slideUp 1s 0.8s ease forwards;">קבע שיעור עכשיו</a>
+
+    <div class="stats">
+        <div class="glass"><span>4.9★</span>דירוג ממוצע</div>
+        <div class="glass"><span>50+</span>תלמידים מרוצים</div>
+        <div class="glass"><span>60₪</span>לשיעור של שעה<div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.3rem;">*מחיר היכרות</div></div>
+    </div>
+</section>
+
+<!-- PUBLIC BOOKING SECTION -->
+<section id="book">
+    <h2>הזמנת שיעור חדש</h2>
+    <div class="glass form-container">
+        <div class="progress">
+            <div class="progress-fill" id="progressFill"></div>
+            <div class="dot active" onclick="goToStep(1)">1</div>
+            <div class="dot" onclick="goToStep(2)">2</div>
+            <div class="dot" onclick="goToStep(3)">3</div>
+        </div>
+
+        <div id="step1" class="step active">
+            <!-- Profile summary: shown when logged in -->
+            <div id="profileSummaryBar">
+                <div>
+                    <div class="psb-name" id="psbName"></div>
+                    <div class="psb-phone" id="psbPhone"></div>
+                </div>
+                <span class="unlock-link" onclick="switchUser()">החלף משתמש</span>
+            </div>
+            <!-- Identity fields: hidden when logged in -->
+            <div id="step1IdentityFields">
+                <div class="input-group">
+                    <label>שם מלא</label>
+                    <input type="text" id="fname" placeholder="ישראל ישראלי">
+                </div>
+                <div class="input-group">
+                    <label>מספר טלפון</label>
+                    <input type="tel" id="fphone" placeholder="050-0000000">
+                </div>
+                <div class="input-group">
+                    <label>כתובת אימייל (מומלץ)</label>
+                    <input type="email" id="femail" placeholder="example@email.com">
+                    <p style="font-size: 0.85rem; opacity: 0.7; margin-top: 5px; color: var(--text);">* המייל אינו חובה, אך מומלץ לקבלת תזכורות.</p>
+                </div>
+            </div>
+            <div class="input-group">
+                <label>צורת שיעור</label>
+                <select id="flessontype">
+                    <option selected>פרונטלי</option>
+                    <option>זום</option>
+                </select>
+            </div>
+            <div class="actions" style="justify-content: center; gap: 20px;">
+                <button class="btn btn-sm" onclick="nextStep(2)">המשך לשלב הבא</button>
+            </div>
+        </div>
+
+        <div id="step2" class="step">
+            <div class="input-group">
+                <label>כיתה / רמת לימוד</label>
+                <select id="fgrade" onchange="updateTopics(this.value)">
+                    <option value="">בחר רמה...</option>
+                    <option value="כיתה ז׳">כיתה ז׳</option>
+                    <option value="כיתה ח׳">כיתה ח׳</option>
+                    <option value="כיתה ט׳">כיתה ט׳</option>
+                    <option value="כיתה י׳ - 3 יח״ל">כיתה י׳ - 3 יח״ל</option>
+                    <option value="כיתה י׳ - 4 יח״ל">כיתה י׳ - 4 יח״ל</option>
+                    <option value="כיתה י׳ - 5 יח״ל">כיתה י׳ - 5 יח״ל</option>
+                    <option value="כיתה י״א - 3 יח״ל">כיתה י״א - 3 יח״ל</option>
+                    <option value="כיתה י״א - 4 יח״ל">כיתה י״א - 4 יח״ל</option>
+                    <option value="כיתה י״א - 5 יח״ל">כיתה י״א - 5 יח״ל</option>
+                    <option value="כיתה י״ב - 3 יח״ל">כיתה י״ב - 3 יח״ל</option>
+                    <option value="כיתה י״ב - 4 יח״ל">כיתה י״ב - 4 יח״ל</option>
+                    <option value="כיתה י״ב - 5 יח״ל">כיתה י״ב - 5 יח״ל</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>בחר נושא לימוד</label>
+                <div class="chips" id="topicChips">
+                    <p style="color:rgba(255,255,255,0.4); font-size:0.95rem">אנא בחר רמה כדי לראות נושאים...</p>
+                </div>
+            </div>
+            <div class="input-group">
+                <label>הערות נוספות</label>
+                <textarea id="fcomments" rows="3" placeholder="כאן אפשר לכתוב נושאים ספציפיים לשיעור, שאלות או בקשות מיוחדות..."></textarea>
+            </div>
+            <div class="actions" style="justify-content: center; gap: 20px;">
+                <button class="btn btn-sm btn-outline" onclick="nextStep(1)">חזור</button>
+                <button class="btn btn-sm" onclick="nextStep(3)">המשך לבחירת מועד</button>
+            </div>
+        </div>
+
+        <div id="step3" class="step">
+            <div class="input-group">
+                <label>תאריך מבוקש</label>
+                <div class="input-wrapper">
+                    <input type="text" id="fdate" placeholder="בחר תאריך..." readonly>
+                    <svg class="input-icon" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                </div>
+            </div>
+            <div class="input-group">
+                <label>שעה פנויה</label>
+                <p id="timeHelp" style="color:var(--gold); font-size:0.9rem; margin-bottom: 1rem; display: none;">בחר שעה פנויה:</p>
+                <div class="grid" id="timeGrid" style="display: none;">
+                    <div class="time-slot" onclick="selectTime(this)">15:00</div>
+                    <div class="time-slot" onclick="selectTime(this)">16:00</div>
+                    <div class="time-slot" onclick="selectTime(this)">17:00</div>
+                    <div class="time-slot" onclick="selectTime(this)">18:00</div>
+                    <div class="time-slot" onclick="selectTime(this)">19:00</div>
+                    <div class="time-slot" onclick="selectTime(this)">20:00</div>
+                </div>
+            </div>
+
+            <div id="bookingSummary" class="glass no-hover" style="margin-top: 2rem; padding: 1.5rem; border: 1px solid var(--gold); border-radius: 16px; text-align: center; display: none;">
+                <h4 style="color: var(--gold); margin-bottom: 1rem; font-size: 1.2rem;">סיכום הזמנה</h4>
+                <div style="display: flex; flex-direction: column; gap: 0.8rem; font-size: 1.1rem;">
+                    <div style="color: var(--text);">תאריך: <span id="summaryDate" style="font-weight: 600; color: var(--gold); margin-right: 5px;">-</span></div>
+                    <div style="color: var(--text);">שעה: <span id="summaryTime" style="font-weight: 600; color: var(--gold); margin-right: 5px;">-</span></div>
+                    <div style="margin-top: 0.5rem; font-size: 1.3rem; font-weight: 800; color: var(--gold); text-shadow: 0 0 10px var(--glow);">עלות שיעור: 60 ₪</div>
+                </div>
+            </div>
+
+            <div class="actions" style="justify-content: center; gap: 20px;">
+                <button class="btn btn-sm btn-outline" onclick="nextStep(2)">חזור</button>
+                <button class="btn btn-sm" id="submitBtn" onclick="confirmBooking()">סיים וקבע שיעור</button>
+            </div>
+            <div id="formError" style="color: #f87171; text-align: center; margin-top: 1rem; display: none; font-weight: bold;"></div>
+        </div>
+
+        <div id="success" class="step">
+            <h3 style="color: #4ade80;">השיעור מופיע בגוגל קלנדר שלך 🎉</h3>
+            <button class="btn" style="margin-top: 2rem;" onclick="resetForm()">קבע עוד שיעור</button>
+        </div>
+    </div>
+</section>
+
+<section id="my-lessons" style="display:none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 2000; background: var(--bg); overflow-y: auto;">
+    <div style="width: 100%; max-width: 800px; padding: 4rem 2rem; margin: 0 auto;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 3rem;">
+            <div style="display:flex; align-items:center; gap: 1rem;">
+                <h2 style="margin-bottom: 0;">השיעורים שלי</h2>
+                <button id="refreshStudentBtn" class="theme-btn" onclick="fetchMyLessons()" style="width: 38px; height: 38px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); display: none;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                </button>
+            </div>
+            <button class="btn btn-sm btn-outline" onclick="logoutStudent()">חזרה לדף הבית</button>
+        </div>
+
+        <div class="glass form-container" style="max-width: 600px; margin: 0 auto;">
+            <div id="welcomeBanner"></div>
+            <div id="loginArea">
+                <div id="loggedInChip">
+                    <div>
+                        <div class="profile-chip-name" id="loggedInName"></div>
+                        <div class="profile-chip-phone" id="loggedInPhone"></div>
+                    </div>
+                    <button class="btn btn-outline" onclick="logoutProfile()" style="padding: 0.5rem 1rem; font-size: 0.82rem; white-space: nowrap;">התנתק / החלף משתמש</button>
+                </div>
+                <div id="authButtons">
+                    <p style="margin-bottom: 1.5rem; text-align: center; opacity: 0.8;">כדי לצפות בשיעורים שלך, התחבר באמצעות Google:</p>
+                    <button class="btn google-auth-btn" onclick="navShowStudentAuth()">Sign in with Google</button>
+                </div>
+            </div>
+            <div id="lessonsResult" style="display: none; margin-top: 1rem;">
+                <div id="lessonsList" style="max-height: 500px; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; padding: 0.5rem;">
+                    <!-- Lessons will appear here -->
+                </div>
+                <div style="margin-top: 1.5rem;">
+                    <h3 style="margin-bottom: 1rem; color: var(--gold);">משימות לביצוע</h3>
+                    <div id="studentTasksList" style="display:flex; flex-direction:column; gap:0.9rem;">
+                        <p style="color:var(--text-muted); text-align:center;">טוען משימות...</p>
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.8rem; margin-top: 1.5rem;">
+                    <a href="https://wa.me/972586458414?text=%D7%94%D7%99%D7%99%20%D7%92%D7%91%D7%90%D7%99%2C%20%D7%90%D7%A0%D7%99%20%D7%A4%D7%95%D7%A0%D7%94%20%D7%90%D7%9C%D7%99%D7%9A%20%D7%9E%D7%94%D7%90%D7%AA%D7%A8%20%D7%9C%D7%92%D7%91%D7%99%20%D7%94%D7%A9%D7%99%D7%A2%D7%95%D7%A8%20%D7%A9%D7%9C%D7%99..." target="_blank" class="btn btn-whatsapp" style="width:100%; text-decoration:none; font-size:1rem; padding: 0.9rem;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                        שלח לי וואטסאפ
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ADMIN DASHBOARD (Hidden by default) -->
+<section id="adminDashboard" style="display:none;">
+    <div style="width: 100%; max-width: 1200px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem;">
+        <h2 style="margin-bottom: 0;">לוח בקרה למנהל</h2>
+        <button class="btn" style="padding: 0.8rem 1.5rem; font-size: 1rem;" onclick="logoutAdmin()">יציאה מניהול</button>
+    </div>
+    <div style="width: 100%; max-width: 1200px; display: flex; flex-direction: column; gap: 3rem;">
+
+        <!-- STATISTICS DASHBOARD -->
+        <div style="display: flex; flex-direction: column; gap: 2rem; width: 100%;">
+            <!-- Metrics Grid -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; width: 100%;">
+                <div class="glass no-hover" style="text-align: center; padding: 1.5rem;">
+                    <h4 style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 0.5rem;">שיעורים השבוע</h4>
+                    <span id="statLessonsWeek" style="font-size: 2.5rem; font-weight: 800; color: var(--gold); text-shadow: 0 0 15px var(--glow);">0</span>
+                </div>
+                <div class="glass no-hover" style="text-align: center; padding: 1.5rem;">
+                    <h4 style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 0.5rem;">שיעורים החודש</h4>
+                    <span id="statLessonsMonth" style="font-size: 2.5rem; font-weight: 800; color: var(--gold); text-shadow: 0 0 15px var(--glow);">0</span>
+                </div>
+                <div class="glass no-hover" style="text-align: center; padding: 1.5rem;">
+                    <h4 style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 0.5rem;">תלמידים ייחודיים</h4>
+                    <span id="statUniqueStudents" style="font-size: 2.5rem; font-weight: 800; color: var(--gold); text-shadow: 0 0 15px var(--glow);">0</span>
+                </div>
+                <div class="glass no-hover" style="text-align: center; padding: 1.5rem;">
+                    <h4 style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 0.5rem;">ממתינים לאישור</h4>
+                    <span id="statPendingApprovals" style="font-size: 2.5rem; font-weight: 800; color: var(--gold); text-shadow: 0 0 15px var(--glow);">0</span>
+                </div>
+            </div>
+
+            <!-- Charts and List Row -->
+            <div style="display: flex; flex-wrap: wrap; gap: 2rem; width: 100%;">
+                <!-- Bar Chart -->
+                <div class="glass no-hover" style="flex: 2; min-width: 350px; padding: 2rem; display: flex; flex-direction: column;">
+                    <h3 style="margin-bottom: 1.5rem; font-size: 1.2rem; color: var(--gold);">שיעורים שבועיים (8 שבועות אחרונים)</h3>
+                    <div style="position: relative; flex-grow: 1; min-height: 250px;">
+                        <canvas id="weeklyLessonsChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Donut Chart -->
+                <div class="glass no-hover" style="flex: 1.2; min-width: 280px; padding: 2rem; display: flex; flex-direction: column;">
+                    <h3 style="margin-bottom: 1.5rem; font-size: 1.2rem; color: var(--gold);">התפלגות נושאי לימוד</h3>
+                    <div style="position: relative; flex-grow: 1; min-height: 250px; display: flex; align-items: center; justify-content: center;">
+                        <canvas id="topicDistributionChart" style="max-height: 240px; max-width: 240px;"></canvas>
+                    </div>
+                </div>
+
+                <!-- Top Active Students -->
+                <div class="glass no-hover" style="flex: 1.2; min-width: 280px; padding: 2rem; display: flex; flex-direction: column;">
+                    <h3 style="margin-bottom: 1.5rem; font-size: 1.2rem; color: var(--gold);">תלמידים פעילים ביותר</h3>
+                    <div id="topStudentsList" style="display: flex; flex-direction: column; gap: 1rem; flex-grow: 1; justify-content: center;">
+                        <!-- Top students will appear here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass no-hover">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1.5rem;">
+                <h3 style="margin:0;">רשימת שיעורים</h3>
+                <div style="display:flex; gap: 1rem;">
+                    <button class="btn btn-sm btn-outline" onclick="approveAllBookings()">אשר את כל השיעורים</button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteCancelledBookings()">מחק את כל השיעורים המבוטלים</button>
+                </div>
+            </div>
+            <div class="schedule-list" id="adminBookingsList">
+                <!-- Bookings injected here -->
+            </div>
+        </div>
+
+        <div class="glass no-hover">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1.5rem;">
+                <h3 style="margin:0;">תצוגת יומן שבועית</h3>
+                <div style="display:flex; gap: 0.8rem;">
+                    <button class="btn btn-sm btn-outline" onclick="changeWeek(-1)">השבוע הקודם</button>
+                    <button class="btn btn-sm btn-outline" onclick="changeWeek(0)">חזרה להיום</button>
+                    <button class="btn btn-sm btn-outline" onclick="changeWeek(1)">השבוע הבא</button>
+                </div>
+            </div>
+            <div class="avail-grid" id="adminAvailGrid">
+                <div class="avail-col"><h3>ראשון</h3><div class="avail-slot free" onclick="handleAdminSlotClick(this)">15:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">16:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">17:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">18:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">19:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">20:00</div><button class="copy-btn" onclick="copyDayAvail(this)">העתק לשבוע הבא</button></div>
+                <div class="avail-col"><h3>שני</h3><div class="avail-slot free" onclick="handleAdminSlotClick(this)">15:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">16:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">17:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">18:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">19:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">20:00</div><button class="copy-btn" onclick="copyDayAvail(this)">העתק לשבוע הבא</button></div>
+                <div class="avail-col"><h3>שלישי</h3><div class="avail-slot free" onclick="handleAdminSlotClick(this)">15:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">16:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">17:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">18:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">19:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">20:00</div><button class="copy-btn" onclick="copyDayAvail(this)">העתק לשבוע הבא</button></div>
+                <div class="avail-col"><h3>רביעי</h3><div class="avail-slot free" onclick="handleAdminSlotClick(this)">15:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">16:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">17:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">18:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">19:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">20:00</div><button class="copy-btn" onclick="copyDayAvail(this)">העתק לשבוע הבא</button></div>
+                <div class="avail-col"><h3>חמישי</h3><div class="avail-slot free" onclick="handleAdminSlotClick(this)">15:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">16:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">17:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">18:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">19:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">20:00</div><button class="copy-btn" onclick="copyDayAvail(this)">העתק לשבוע הבא</button></div>
+                <div class="avail-col"><h3>שישי</h3><div class="avail-slot free" onclick="handleAdminSlotClick(this)">15:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">16:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">17:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">18:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">19:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">20:00</div><button class="copy-btn" onclick="copyDayAvail(this)">העתק לשבוע הבא</button></div>
+                <div class="avail-col"><h3>שבת</h3><div class="avail-slot free" onclick="handleAdminSlotClick(this)">15:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">16:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">17:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">18:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">19:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">20:00</div><button class="copy-btn" onclick="copyDayAvail(this)">העתק לשבוע הבא</button></div>
+            </div>
+            <button class="btn btn-mini" style="margin-top: 2rem;" onclick="showToast('הזמינות עודכנה!')">שמור זמינות</button>
+        </div>
+
+    </div>
+</section>
+
+<div id="taskModal" onclick="if(event.target===this) closeTaskModal()">
+  <div class="task-box">
+    <h3>הוסף משימה</h3>
+    <div class="input-group">
+      <label>שם התלמיד</label>
+      <input type="text" id="taskStudentName" readonly>
+    </div>
+    <div class="input-group">
+      <label>פרטי השיעור / תאריך</label>
+      <input type="text" id="taskLessonDetails" readonly>
+    </div>
+    <div class="input-group">
+      <label>כותרת המשימה</label>
+      <input type="text" id="taskTitle" placeholder="תרגול משוואות...">
+    </div>
+    <div class="input-group">
+      <label>תיאור המשימה</label>
+      <textarea id="taskDescription" placeholder="הסבר קצר מה צריך לעשות..."></textarea>
+    </div>
+<div class="input-group">
+      <label>קובץ מצורף</label>
+      <input type="file" id="taskFile" accept=".pdf,image/*,.doc,.docx" onchange="handleTaskFileName()">
+      <div class="task-hint">PDF, תמונה או מסמך Word.</div>
+      <div id="taskFileName" class="task-file-name"></div>
+    </div>
+    <div class="input-group">
+      <label>תאריך יעד (לא חובה)</label>
+      <input type="date" id="taskDueDate">
+    </div>
+    <div class="task-actions">
+      <button class="btn" onclick="saveAndSendTask()">שמור ושלח לתלמיד</button>
+      <button class="btn btn-outline" onclick="closeTaskModal()">ביטול</button>
+    </div>
+  </div>
+</div>
+
+<div id="auth-modal">
+    <div class="glass">
+        <h3 style="margin-bottom: 1.5rem; font-size: 2rem;">כניסת מנהל</h3>
+        <div style="position: relative; margin: 1.5rem 0;">
+            <input type="password" id="adminPass" placeholder="הכנס סיסמה..." style="width:100%; padding-left: 3rem; margin-bottom: 0;" onkeydown="if(event.key==='Enter') loginAdmin()">
+            <span onclick="togglePass()" style="position:absolute; left:1rem; top:50%; transform:translateY(-50%); cursor:pointer; font-size:1.3rem;">👁</span>
+        </div>
+        <div style="display:flex; flex-direction: column; gap: 0.8rem;">
+            <button class="btn" style="width: 100%;" onclick="loginAdmin()">היכנס</button>
+            <button class="btn btn-cancel" style="width: 100%;" onclick="document.getElementById('auth-modal').style.display='none'">ביטול</button>
+        </div>
+    </div>
+</div>
+
+<div id="confirm-modal">
+    <div class="confirm-box">
+        <p id="confirm-msg"></p>
+        <div class="confirm-actions">
+            <button class="btn btn-sm" id="confirm-ok">אשר</button>
+            <button class="btn btn-sm btn-outline" id="confirm-cancel">ביטול</button>
+        </div>
+    </div>
+</div>
+
+<div id="student-auth-modal" onclick="if(event.target===this) closeStudentAuthModal()">
+    <div class="confirm-box" style="max-width:440px; width:92%; text-align:right; padding:2rem 2.2rem;">
+        <div class="student-auth-shell">
+            <h3 style="color:var(--gold); margin-bottom:0.4rem; font-size:1.6rem;">התחברות תלמידים</h3>
+            <p style="color:var(--text-muted); line-height:1.7;">התחבר דרך חשבון גוגל פעיל</p>
+            <div id="studentAuthStatus" class="student-auth-status">
+                <div class="meta">
+                    <strong id="studentAuthName">-</strong>
+                    <span id="studentAuthEmail">-</span>
+                </div>
+                <button class="btn btn-outline btn-sm" onclick="logoutProfile()">Logout</button>
+            </div>
+            <button class="btn google-auth-btn" onclick="signInWithGoogle()">
+                <svg viewBox="0 0 48 48" aria-hidden="true">
+                    <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303C33.652 32.657 29.266 36 24 36c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.957 3.043l5.657-5.657C34.008 6.053 29.319 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.651-.389-3.917z"/>
+                    <path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.957 3.043l5.657-5.657C34.008 6.053 29.319 4 24 4c-7.682 0-14.308 4.337-17.694 10.691z"/>
+                    <path fill="#4CAF50" d="M24 44c5.226 0 9.915-1.993 13.478-5.237l-6.218-5.243C29.19 35.091 26.751 36 24 36c-5.245 0-9.618-3.327-11.303-7.946l-6.521 5.025C9.526 39.556 16.227 44 24 44z"/>
+                    <path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303c-1.015 2.793-2.992 5.102-5.543 6.52l.004-.003 6.218 5.243C35.536 39.78 44 34 44 24c0-1.341-.138-2.651-.389-3.917z"/>
+                </svg>
+                Sign in with Google
+            </button>
+            <button class="btn btn-outline" onclick="closeStudentAuthModal()" style="width:100%; margin-top:0.2rem; font-size:0.85rem; opacity:0.65;">סגור</button>
+        </div>
+    </div>
+</div>
+
+<a id="floatingContact" href="https://wa.me/972586458414" target="_blank" rel="noopener noreferrer">
+    <span class="fc-label">לשאלות פנו אליי:</span>
+    <span class="fc-number">058-6458414</span>
+    <span class="fc-copy" title="WhatsApp">
+        <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+            <path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.554 4.122 1.526 5.857L.057 23.882a.5.5 0 0 0 .614.612l6.094-1.478A11.955 11.955 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.891 0-3.666-.523-5.184-1.434l-.372-.22-3.862.936.975-3.773-.243-.389A9.956 9.956 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+        </svg>
+    </span>
+</a>
+
+<div id="toast-container"></div>
+
+<button id="voiceAssistantFab" class="voice-assistant-fab" type="button" aria-label="פתח עוזרת קולית" onclick="requestVoiceAssistantAccess()">
+    <div class="voice-assistant-visual" aria-hidden="true">
+        <canvas id="voiceAssistantCanvasFab" class="voice-assistant-canvas"></canvas>
+    </div>
+</button>
+
+<div id="voiceAssistantOverlay" class="voice-assistant-overlay" onclick="closeVoiceAssistantModal(event)">
+  <div class="voice-assistant-modal" role="dialog" aria-modal="true" aria-labelledby="voiceAssistantTitle">
+    <div class="voice-assistant-modal-head">
+      <div class="voice-assistant-modal-title">
+        <strong id="voiceAssistantTitle">עוזרת קולית</strong>
+        <div id="voiceAssistantStatus" class="voice-assistant-status" data-state="idle" aria-live="polite"></div>
+      </div>
+      <button class="voice-assistant-close" type="button" aria-label="סגור" onclick="closeVoiceAssistantModal()">×</button>
+    </div>
+    <div class="voice-assistant-center">
+      <button type="button" class="voice-assistant-visual" aria-label="הפעלת הקלטה קולית" onclick="startVoiceAssistantListening()">
+        <canvas id="voiceAssistantCanvasModal" class="voice-assistant-canvas"></canvas>
+      </button>
+      <div id="voiceAssistantMessage" class="voice-assistant-modal-response" aria-live="polite"></div>
+    </div>
+    <div class="voice-assistant-bottom">
+      <div class="voice-assistant-separator"><span>או</span></div>
+      <div class="voice-assistant-entry">
+        <input type="text" id="assistantTextInput" placeholder="ציין: תאריך, שעה, כיתה ונושא." oninput="handleAssistantTyping()" onkeydown="handleAssistantTextKeydown(event)">
+        <button class="voice-assistant-mic-btn" type="button" aria-label="הפעלת מיקרופון" onclick="startVoiceAssistantListening()">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+            <path d="M12 14.5c1.93 0 3.5-1.57 3.5-3.5V5.5a3.5 3.5 0 1 0-7 0V11c0 1.93 1.57 3.5 3.5 3.5Zm5-3.5a1 1 0 0 1 2 0 7.01 7.01 0 0 1-6 6.93V20h3a1 1 0 1 1 0 2H8a1 1 0 1 1 0-2h3v-2.07A7.01 7.01 0 0 1 5 11a1 1 0 1 1 2 0 5 5 0 0 0 10 0Z"/>
+          </svg>
+        </button>
+        <button class="btn voice-assistant-input-send" type="button" onclick="submitAssistantText()">שלח</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAIe7etcaWnB2Sco2G3WBt-M-f8-i_i_zI",
+  authDomain: "gabaymath.firebaseapp.com",
+  projectId: "gabaymath",
+  storageBucket: "gabaymath.firebasestorage.app",
+  messagingSenderId: "862656886301",
+  appId: "1:862656886301:web:a49945b73066023dc54374",
+  measurementId: "G-QJC05YG855"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+const storage = firebase.storage();
+const googleProvider = new firebase.auth.GoogleAuthProvider();
+googleProvider.setCustomParameters({ prompt: 'select_account' });
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+
+// Admin credentials for auto-bypass
+const ADMIN_CREDENTIALS = {
+    name: 'נעם גבאי',
+    phone: '0586458414',
+    email: 'nooam.gabay@gmail.com'
+};
+
+if (history.scrollRestoration) history.scrollRestoration = 'manual';
+window.scrollTo(0, 0);
+
+let weeklyChartInstance = null;
+let topicChartInstance = null;
+let currentWeekOffset = 0;
+let currentFirebaseUser = null;
+function changeWeek(offset) {
+    if (offset === 0) currentWeekOffset = 0;
+    else currentWeekOffset += offset;
+    renderAvailGrid();
+}
+
+const MOON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+const SUN_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+
+window.onload = function() {
+    updateTopics('');
+    initVoiceAssistantVisual();
+    const btn = document.getElementById('themeToggle');
+    if (localStorage.getItem('theme') === 'light') {
+        document.body.classList.add('light-mode');
+        btn.innerHTML = SUN_SVG;
+    } else {
+        btn.innerHTML = MOON_SVG;
+    }
+    applyProfileToBookingForm();
+    updateNavAuth();
+
+    flatpickr("#fdate", {
+        locale: "he",
+        dateFormat: "Y-m-d",
+        minDate: "today",
+        disableMobile: "true",
+        prevArrow: '<svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>',
+        nextArrow: '<svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>',
+        onChange: function(selectedDates, dateStr) {
+            checkAvailability(dateStr);
+            updateBookingSummary();
+        }
+    });
+
+    // Nav active state on scroll
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = { 'hero': 'navHome', 'book': 'navBook' };
+    const scrollObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                document.querySelectorAll('nav a').forEach(a => a.classList.remove('nav-active'));
+                const linkId = navLinks[entry.target.id];
+                if (linkId) document.getElementById(linkId).classList.add('nav-active');
+            }
+        });
+    }, { threshold: 0.4 });
+    sections.forEach(s => scrollObserver.observe(s));
+};
+
+auth.onAuthStateChanged((user) => {
+    currentFirebaseUser = user || null;
+    syncStudentAuthState(user);
+    fetchStudentTasks();
+});
+
+function formatTimeSlot(timeStr) {
+    const [hour, minute] = timeStr.split(':').map(Number);
+    return `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+}
+
+function getSelectedTimeSlots() {
+    return Array.from(document.querySelectorAll('.time-slot.selected'))
+        .map(slot => slot.innerText.trim())
+        .sort((a, b) => {
+            const [hA, mA] = a.split(':').map(Number);
+            const [hB, mB] = b.split(':').map(Number);
+            return hA - hB || mA - mB;
+        });
+}
+
+function getSelectedTimeRangeText() {
+    const selected = getSelectedTimeSlots();
+    if (!selected.length) return '-';
+    const start = selected[0];
+    const last = selected[selected.length - 1];
+    const endHour = parseInt(last.split(':')[0], 10) + 1;
+    const end = `${endHour.toString().padStart(2, '0')}:${last.split(':')[1]}`;
+    return `${start} - ${end}`;
+}
+
+function updateBookingSummary() {
+    const summaryCard = document.getElementById('bookingSummary');
+    const summaryDate = document.getElementById('summaryDate');
+    const summaryTime = document.getElementById('summaryTime');
+    const dateInput = document.getElementById('fdate').value;
+    const selectedTimeText = getSelectedTimeRangeText();
+
+    if (dateInput || selectedTimeText !== '-') {
+        summaryCard.style.display = 'block';
+        summaryDate.innerText = dateInput || '-';
+        summaryTime.innerText = selectedTimeText;
+    } else {
+        summaryCard.style.display = 'none';
+    }
+}
+
+    emailjs.init({publicKey: "JI7HdPnpg063aq0Pl", blockHeadless: false});
+
+    // Intersection Observer for Section Animations
+    const observerOptions = { threshold: 0.1 };
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('reveal');
+            }
+        });
+    }, observerOptions);
+    document.querySelectorAll('section').forEach(sec => observer.observe(sec));
+
+function toggleTheme() {
+    const body = document.body;
+    const btn = document.getElementById('themeToggle');
+    body.classList.toggle('light-mode');
+    if (body.classList.contains('light-mode')) {
+        btn.innerHTML = SUN_SVG;
+        localStorage.setItem('theme', 'light');
+    } else {
+        btn.innerHTML = MOON_SVG;
+        localStorage.setItem('theme', 'dark');
+    }
+}
+
+const _navbar = document.getElementById('navbar');
+let _scrollTicking = false;
+window.addEventListener('scroll', () => {
+    if (!_scrollTicking) {
+        requestAnimationFrame(() => {
+            _navbar.style.padding = window.scrollY > 50 ? '0.7rem 2rem' : '1rem 2rem';
+            _scrollTicking = false;
+        });
+        _scrollTicking = true;
+    }
+}, { passive: true });
+
+let maxReachedStep = 1;
+function nextStep(s) {
+    if (s > maxReachedStep) maxReachedStep = s;
+    document.querySelectorAll('.step').forEach(e => e.classList.remove('active'));
+    document.getElementById('step' + s).classList.add('active');
+    document.querySelectorAll('.dot').forEach((e, i) => {
+        if (i < s) e.classList.add('active'); else e.classList.remove('active');
+    });
+    // Update progress fill bar
+    const fill = document.getElementById('progressFill');
+    if (fill) fill.style.width = ((s - 1) / 2 * 100) + '%';
+}
+
+function goToStep(s) {
+    if (s <= maxReachedStep) {
+        nextStep(s);
+    }
+}
+
+function updateTopics(grade) {
+  const topics = {
+    'כיתה ז׳': [
+      'מספרים מכוונים', 'ביטויים אלגבריים', 'משוואות ממעלה ראשונה',
+      'גיאומטריה - שטח היקף ונפח', 'פונקציה - היכרות ראשונית', 'סטטיסטיקה'
+    ],
+    'כיתה ח׳': [
+      'פירוק לגורמים', 'שברים אלגבריים', 'משוואות ממעלה שנייה',
+      'מערכת משוואות', 'משפט פיתגורס', 'חזקות ושורשים', 'גיאומטריה - מעגל'
+    ],
+    'כיתה ט׳': [
+      'פונקציה ליניארית', 'פרבולה', 'אי-שוויונות',
+      'גיאומטריה מוכחת', 'טריגונומטריה', 'הסתברות', 'חקירת פונקציה'
+    ],
+    'כיתה י׳ - 3 יח״ל': [
+      'אלגברה ומשוואות', 'פונקציות ליניאריות וריבועיות',
+      'טריגונומטריה - משולש ישר זווית', 'סטטיסטיקה',
+      'בעיות מילוליות'
+    ],
+    'כיתה י׳ - 4 יח״ל': [
+      'אלגברה', 'פונקציות - ליניארית ריבועית ושורש',
+      'גיאומטריה אנליטית - ישרים', 'טריגונומטריה', 'הסתברות'
+    ],
+    'כיתה י׳ - 5 יח״ל': [
+      'אלגברה', 'פונקציות', 'גיאומטריה אנליטית',
+      'טריגונומטריה', 'וקטורים', 'הסתברות'
+    ],
+    'כיתה י״א - 3 יח״ל': ['גדילה ודעיכה', 'הסתברות', 'גיאומטריה', 'טריגונומטריה במישור', 'סטטיסטיקה', 'פונקציה קווית'],
+    'כיתה י״א - 4 יח״ל': ['סטטיסטיקה', 'הסתברות', 'גאומטרייה', 'חקירה של פולינומים', 'חקירה של פונקציות רציונליות', 'חקירה של פונקציות שורש'],
+    'כיתה י״א - 5 יח״ל': ['שאלות קצרות', 'אינדוקציה', 'סדרות', 'הסתברות', 'גאומטרייה', 'טריגונומטריה במישור', 'חקירה', 'אינטגרלים'],
+    'כיתה י״ב - 3 יח״ל': ['תכנון ליניארי', 'גיאומטריה אנליטית', 'התפלגות נורמלית', 'מודל ריבועי', 'ראייה מרחבית', 'גופים במרחב'],
+    'כיתה י״ב - 4 יח״ל': ['סדרות', 'גיאומטריה במרחב', 'גדילה ודעיכה', 'חקירה מעריכית', 'חקירה לוגריתמית', 'אינטגרלים'],
+    'כיתה י״ב - 5 יח״ל': ['גיאומטריה אנליטית', 'וקטורים', 'טריגונומטריה במרחב', 'מספרים מרוכבים', 'פונקציות מעריכיות', 'פונקציות לוגריתמיות', 'גדילה ודעיכה']
+  };
+  const chips = document.getElementById('topicChips');
+  if (!grade) {
+    chips.innerHTML = '<p style="color:rgba(255,255,255,0.4);font-size:0.95rem">אנא בחר רמה כדי לראות נושאים...</p>';
+    return;
+  }
+  chips.innerHTML = (topics[grade] || []).map(t =>
+    `<div class="chip" onclick="selectChip(this)">${t}</div>`
+  ).join('');
+}
+
+function selectChip(el) {
+    el.classList.toggle('selected');
+}
+
+function selectTime(el) {
+    if (el.classList.contains('occupied') || el.classList.contains('past')) return;
+
+    const selectedSlots = Array.from(document.querySelectorAll('.time-slot.selected'));
+    const clickedTime = el.innerText.trim();
+    const clickedHour = parseInt(clickedTime.split(':')[0], 10);
+
+    if (el.classList.contains('selected')) {
+        el.classList.remove('selected');
+        updateBookingSummary();
+        return;
+    }
+
+    if (selectedSlots.length === 0) {
+        el.classList.add('selected');
+        updateBookingSummary();
+        return;
+    }
+
+    const selectedTimes = selectedSlots
+        .map(slot => slot.innerText.trim())
+        .sort((a, b) => parseInt(a.split(':')[0], 10) - parseInt(b.split(':')[0], 10));
+    const firstHour = parseInt(selectedTimes[0].split(':')[0], 10);
+    const lastHour = parseInt(selectedTimes[selectedTimes.length - 1].split(':')[0], 10);
+    const isAdjacentToStart = clickedHour === firstHour - 1;
+    const isAdjacentToEnd = clickedHour === lastHour + 1;
+
+    if (selectedSlots.length === 1 && (isAdjacentToStart || isAdjacentToEnd)) {
+        el.classList.add('selected');
+    } else {
+        selectedSlots.forEach(slot => slot.classList.remove('selected'));
+        el.classList.add('selected');
+    }
+
+    updateBookingSummary();
+}
+
+function checkAvailability(date) {
+    const grid = document.getElementById('timeGrid');
+    const help = document.getElementById('timeHelp');
+    if (!date) {
+        grid.style.display = 'none';
+        help.style.display = 'none';
+        return;
+    }
+    grid.style.display = 'grid';
+    help.style.display = 'block';
+
+    const now = new Date();
+    const israelTime = new Date(now.toLocaleString("en-US", {timeZone: "Asia/Jerusalem"}));
+    const todayStr = israelTime.toISOString().split('T')[0];
+    const currentHour = israelTime.getHours();
+    const currentMin = israelTime.getMinutes();
+
+    // Create a flat map of time slots for O(1) lookups
+    const slotsMap = {};
+    document.querySelectorAll('.time-slot').forEach(slot => {
+        slot.classList.remove('selected', 'occupied', 'past');
+        const timeStr = slot.innerText.trim();
+        slotsMap[timeStr] = slot;
+
+        // Block past slots for today
+        if (date === todayStr) {
+            const [h, m] = timeStr.split(':').map(Number);
+            if (h < currentHour || (h === currentHour && m <= currentMin)) {
+                slot.classList.add('past');
+            }
+        }
+    });
+
+    // Fetch availability and bookings concurrently
+    Promise.all([
+        db.collection("availability").where("date", "==", date).where("isFree", "==", false).get(),
+        db.collection("bookings").where("date", "==", date).get()
+    ]).then(([availSnap, bookingsSnap]) => {
+        availSnap.forEach(doc => {
+            const data = doc.data();
+            if (slotsMap[data.time]) {
+                slotsMap[data.time].classList.add('occupied');
+            }
+        });
+
+        bookingsSnap.forEach(doc => {
+            const b = doc.data();
+            if (b.status !== 'בוטל' && slotsMap[b.time]) {
+                slotsMap[b.time].classList.add('occupied');
+            }
+        });
+    }).catch(err => {
+        console.error("Error fetching availability:", err);
+    });
+}
+
+function approveAllBookings() {
+    showConfirm('האם לאשר את כל השיעורים במערכת?', () => {
+        db.collection("bookings").get().then(snapshot => {
+            const batch = db.batch();
+            snapshot.forEach(doc => batch.update(doc.ref, { status: 'מאושר' }));
+            batch.commit().then(() => {
+                showToast('כל השיעורים אושרו בהצלחה');
+            });
+        });
+    });
+}
+
+let calData = {};
+let sessionPhone = ''; // persists across nav clicks for auto-refresh
+
+function confirmBooking() {
+    const { name: fname, phone: fphone, email: femail } = getBookingIdentity();
+    const dateInput = document.getElementById('fdate').value;
+    const selectedSlots = Array.from(document.querySelectorAll('.time-slot.selected'))
+        .sort((a, b) => parseInt(a.innerText.split(':')[0], 10) - parseInt(b.innerText.split(':')[0], 10));
+    const gradeSelect = document.getElementById('fgrade');
+    const gradeText = gradeSelect.selectedOptions[0] ? gradeSelect.selectedOptions[0].text : '';
+    const gradeValue = gradeSelect.value;
+    const selectedChips = Array.from(document.querySelectorAll('.chip.selected'));
+    const subject = selectedChips.map(c => c.innerText).join(', ');
+    const errorDiv = document.getElementById('formError');
+
+    // Email is now OPTIONAL, so we only check Name, Date, Time, and Grade.
+    if (!fname || !dateInput || !selectedSlots.length || !gradeValue) {
+        if(errorDiv) {
+            errorDiv.innerText = 'נא למלא שם, לבחור רמה, תאריך ושעה.';
+            errorDiv.style.display = 'block';
+        }
+        return;
+    }
+    if (selectedChips.length === 0) {
+        if(errorDiv) {
+            errorDiv.innerText = 'נא לבחור לפחות נושא אחד.';
+            errorDiv.style.display = 'block';
+        }
+        return;
+    }
+
+    const selectedTimes = selectedSlots.map(slot => slot.innerText.trim());
+    const selectedStartTime = selectedTimes[0];
+    const selectedEndHour = parseInt(selectedTimes[selectedTimes.length - 1].split(':')[0], 10) + 1;
+    const selectedEndTime = `${selectedEndHour.toString().padStart(2, '0')}:${selectedTimes[selectedTimes.length - 1].split(':')[1]}`;
+
+    const isConsecutive = selectedTimes.every((time, index, arr) => {
+        if (index === 0) return true;
+        return parseInt(time.split(':')[0], 10) - parseInt(arr[index - 1].split(':')[0], 10) === 1;
+    });
+
+    if (!isConsecutive || selectedTimes.length > 2) {
+        if(errorDiv) {
+            errorDiv.innerText = 'בחר עד שעתיים רצופות, בבקשה.';
+            errorDiv.style.display = 'block';
+        }
+        return;
+    }
+
+    if (selectedStartTime === '14:00') {
+        if(errorDiv) {
+            errorDiv.innerText = 'שעה זו אינה פנויה יותר לתיאום.';
+            errorDiv.style.display = 'block';
+        }
+        return;
+    }
+
+    if (!isSlotAvailable(dateInput, selectedTimes)) {
+        if(errorDiv) {
+            errorDiv.innerText = 'השעות שנבחרו אינן פנוייות, אנא בחר שוב.';
+            errorDiv.style.display = 'block';
+        }
+        return;
+    }
+
+    if(errorDiv) errorDiv.style.display = 'none';
+
+    const newBooking = {
+        name: fname,
+        phone: fphone,
+        email: femail,
+        studentId: firebase.auth().currentUser ? firebase.auth().currentUser.uid : '',
+        studentEmail: firebase.auth().currentUser ? firebase.auth().currentUser.email || femail : femail,
+        topic: subject,
+        subject: subject,
+        grade: gradeText,
+        lessonFormat: document.getElementById('flessontype').value,
+        date: dateInput,
+        time: selectedStartTime,
+        endTime: selectedEndTime,
+        durationHours: selectedTimes.length,
+        comments: document.getElementById('fcomments').value || '',
+        status: "ממתין",
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        // Reminder flags for backend scheduling (24h and 2h before)
+        reminders: {
+            confirmationSent: false,
+            h24Sent: false,
+            h2Sent: false
+        }
+    };
+
+    const submitBtn = document.getElementById('submitBtn');
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'מעבד...';
+        submitBtn.style.opacity = '0.6';
+    }
+
+    // ONLY push to Firestore here - never on slot click
+    db.collection("bookings").add(newBooking).then(() => {
+        // Also save/update user record in users collection
+        const sanitizedPhone = sanitizePhoneNumber(fphone);
+        saveUserToFirebase(fname, sanitizedPhone, femail)
+            .catch(err => console.error('Error saving user record:', err));
+
+        // Trigger both Admin and Student notifications
+        sendNotification('new_booking', newBooking);
+
+        // Success flow
+        const startDate = dateInput.replace(/-/g, '') + 'T' + selectedStartTime.replace(':', '') + '00';
+        const endDate = dateInput.replace(/-/g, '') + 'T' + selectedEndTime.replace(':', '') + '00';
+        const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('שיעור מתמטיקה עם גבאי')}&dates=${startDate}/${endDate}&details=${encodeURIComponent('נושא: ' + subject + '\nשם: ' + fname)}&location=Online`;
+
+        window.open(gcalUrl, '_blank');
+
+        // Save student profile for next visit
+        saveProfile(fname, fphone, femail);
+
+        // Trigger Golden Confetti Celebration
+        confetti({
+            particleCount: 150,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: ['#c9a84c', '#ffffff', '#ffffff']
+        });
+
+        document.querySelectorAll('.step').forEach(e => e.classList.remove('active'));
+        document.getElementById('success').classList.add('active');
+        document.querySelector('.progress').style.display = 'none';
+    }).catch(err => {
+        console.error('Firebase Error:', err);
+        showToast('שגיאה בשמירת השיעור, נסה שוב.');
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerText = 'סיים וקבע שיעור';
+            submitBtn.style.opacity = '1';
+        }
+    });
+}
+
+function showAuth() {
+    const currentUser = firebase.auth().currentUser;
+    if (currentUser && currentUser.email === 'nooam.gabay@gmail.com') {
+        openAdminPanel();
+        return;
+    }
+
+    document.getElementById('auth-modal').style.display = 'flex';
+    setTimeout(() => {
+        document.getElementById('adminPass').focus();
+    }, 100);
+}
+
+function openAdminPanel() {
+    document.getElementById('auth-modal').style.display = 'none';
+    document.getElementById('book').classList.add('admin-hidden');
+    document.getElementById('hero').classList.add('admin-hidden');
+
+    document.querySelectorAll('.sym').forEach(s => s.style.animationPlayState = 'paused');
+    document.querySelectorAll('.math-bg').forEach(b => b.style.display = 'none');
+
+    document.getElementById('adminDashboard').style.display = 'flex';
+    renderAdminBookings();
+    renderAvailGrid();
+    showToast('התחברת בהצלחה כמנהל');
+    document.getElementById('adminPass').value = '';
+}
+
+function loginAdminAutomatically() {
+    openAdminPanel();
+}
+
+function loginAdmin() {
+    const p = document.getElementById('adminPass').value;
+    if(p === 'admin123') {
+        document.getElementById('auth-modal').style.display = 'none';
+        document.getElementById('book').classList.add('admin-hidden');
+        document.getElementById('hero').classList.add('admin-hidden');
+        
+        document.querySelectorAll('.sym').forEach(s => s.style.animationPlayState = 'paused');
+        document.querySelectorAll('.math-bg').forEach(b => b.style.display = 'none');
+
+        document.getElementById('adminDashboard').style.display = 'flex';
+        renderAdminBookings();
+        renderAvailGrid();
+        showToast('התחברת בהצלחה כמנהל');
+        document.getElementById('adminPass').value = '';
+    } else {
+        showToast('סיסמה שגויה, נסה שוב');
+    }
+}
+
+function buildGCalLink(b) {
+    const start = b.date.replace(/-/g, '') + 'T' + b.time.replace(':', '') + '00';
+    const endHour = (parseInt(b.time.split(':')[0]) + 1).toString().padStart(2, '0');
+    const end = b.date.replace(/-/g, '') + 'T' + endHour + b.time.split(':')[1] + '00';
+    return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('שיעור מתמטיקה עם גבאי')}&dates=${start}/${end}&details=${encodeURIComponent('נושא: ' + b.topic)}&location=Online`;
+}
+
+function getProfile() {
+    if (!currentFirebaseUser) return null;
+    return {
+        name: currentFirebaseUser.displayName || 'תלמיד',
+        email: currentFirebaseUser.email || '',
+        uid: currentFirebaseUser.uid
+    };
+}
+
+function getBookingIdentity() {
+    const profile = getProfile();
+    const nameEl = document.getElementById('fname');
+    const phoneEl = document.getElementById('fphone');
+    const emailEl = document.getElementById('femail');
+    return {
+        name: (profile && profile.name) || (nameEl && nameEl.value.trim()) || '',
+        phone: (phoneEl && phoneEl.value.trim()) || '',
+        email: (profile && profile.email) || (emailEl && emailEl.value.trim()) || ''
+    };
+}
+
+function getCurrentStudentName() {
+    const profile = getProfile();
+    return (profile && profile.name) || (firebase.auth().currentUser && firebase.auth().currentUser.displayName) || '';
+}
+
+function isAssistantAuthenticated() {
+    return !!(auth && auth.currentUser);
+}
+
+function promptAssistantLogin() {
+    showToast('כדי להשתמש בעוזרת הקולית יש להתחבר לאתר');
+    const modal = document.getElementById('student-auth-modal');
+    if (modal) {
+        modal.style.display = 'flex';
+        setTimeout(() => {
+            const googleBtn = modal.querySelector('.google-auth-btn');
+            if (googleBtn) googleBtn.focus({ preventScroll: true });
+        }, 80);
+    }
+}
+
+const voiceAssistantVisual = {
+    canvases: [],
+    raf: null,
+    state: 'idle',
+    idle: { speed: 0.4, amplitude: 1.0, glow: 2.0, colors: ['#06B6D4', '#7C3AED', '#FF4242'] },
+    listening: { speed: 1.2, amplitude: 2.2, glow: 3.4, colors: ['#06B6D4', '#7C3AED', '#10B981'] },
+    processing: { speed: 0.8, amplitude: 1.5, glow: 2.8, colors: ['#06B6D4', '#7C3AED', '#FF4242'] },
+    busy: { speed: 0.65, amplitude: 1.1, glow: 2.2, colors: ['#FF4242', '#7C3AED', '#06B6D4'] },
+    typing: { speed: 0.55, amplitude: 1.05, glow: 2.1, colors: ['#06B6D4', '#FF4242', '#7C3AED'] }
+};
+
+function getVoiceVisualProps(state) {
+    return voiceAssistantVisual[state] || voiceAssistantVisual.idle;
+}
+
+function isLightTheme() {
+    return document.body.classList.contains('light-mode');
+}
+
+function resizeVoiceCanvas() {
+    const dpr = window.devicePixelRatio || 1;
+    voiceAssistantVisual.canvases.forEach(canvas => {
+        const rect = canvas.getBoundingClientRect();
+        canvas.width = Math.max(1, Math.round(rect.width * dpr));
+        canvas.height = Math.max(1, Math.round(rect.height * dpr));
+        const ctx = canvas.getContext('2d');
+        if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    });
+}
+
+function drawVoiceAssistantVisual(now) {
+    if (!voiceAssistantVisual.canvases.length) return;
+    const props = getVoiceVisualProps(voiceAssistantVisual.state);
+    const lightMode = isLightTheme();
+    const t = now * 0.001;
+    voiceAssistantVisual.canvases.forEach(canvas => {
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        const w = canvas.clientWidth;
+        const h = canvas.clientHeight;
+        const cx = w / 2;
+        const cy = h / 2;
+        const radius = Math.min(w, h) * 0.5;
+        ctx.clearRect(0, 0, w, h);
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius - 0.5, 0, Math.PI * 2);
+        ctx.clip();
+
+        const bg = ctx.createRadialGradient(cx * 0.35, cy * 0.35, radius * 0.2, cx, cy, radius);
+        bg.addColorStop(0, lightMode ? 'rgba(255,255,255,0.48)' : 'rgba(255,255,255,0.15)');
+        bg.addColorStop(0.35, lightMode ? 'rgba(6,182,212,0.2)' : 'rgba(6,182,212,0.16)');
+        bg.addColorStop(1, lightMode ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.22)');
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, w, h);
+
+        ctx.globalCompositeOperation = 'lighter';
+        const strands = 8;
+        for (let i = 0; i < strands; i++) {
+            const phase = i * 0.9;
+            const yBase = cy + Math.sin(t * props.speed + phase) * (radius * 0.12);
+            const amplitude = radius * 0.12 * props.amplitude;
+            const color = props.colors[i % props.colors.length];
+            ctx.beginPath();
+            for (let x = 0; x <= w; x += 2) {
+                const nx = x / w;
+                const wave =
+                    Math.sin(nx * Math.PI * 4 + t * (props.speed * 2.2) + phase) * 0.55 +
+                    Math.sin(nx * Math.PI * 7 - t * (props.speed * 1.3) + phase * 1.7) * 0.35;
+                const y = yBase + wave * amplitude;
+                if (x === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 1.2 + props.amplitude * 0.25;
+            ctx.shadowBlur = props.glow * 2.4;
+            ctx.shadowColor = color;
+            ctx.globalAlpha = 0.28 + (i / strands) * 0.08;
+            ctx.stroke();
+        }
+
+        const core = ctx.createRadialGradient(cx, cy, radius * 0.05, cx, cy, radius * 0.42);
+        core.addColorStop(0, lightMode ? 'rgba(255,255,255,0.98)' : 'rgba(255,255,255,0.95)');
+        core.addColorStop(0.22, lightMode ? 'rgba(255,255,255,0.42)' : 'rgba(255,255,255,0.25)');
+        core.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.globalAlpha = 1;
+        ctx.shadowBlur = props.glow * 4;
+        ctx.shadowColor = props.colors[0];
+        ctx.fillStyle = core;
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius * 0.18 + Math.sin(t * props.speed * 1.8) * radius * 0.03, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+    });
+    voiceAssistantVisual.raf = requestAnimationFrame(drawVoiceAssistantVisual);
+}
+
+function initVoiceAssistantVisual() {
+    if (voiceAssistantVisual.canvases.length) return;
+    voiceAssistantVisual.canvases = [
+        document.getElementById('voiceAssistantCanvasFab'),
+        document.getElementById('voiceAssistantCanvasModal')
+    ].filter(Boolean);
+    if (!voiceAssistantVisual.canvases.length) return;
+    resizeVoiceCanvas();
+    window.addEventListener('resize', resizeVoiceCanvas);
+    if (!voiceAssistantVisual.raf) voiceAssistantVisual.raf = requestAnimationFrame(drawVoiceAssistantVisual);
+}
+
+function setAssistantState(state, message) {
+    const status = document.getElementById('voiceAssistantStatus');
+    if (status) {
+        status.classList.add('active');
+        status.dataset.state = state;
+        status.textContent = message || '';
+    }
+    voiceAssistantVisual.state = state || 'idle';
+    voiceAssistantVisual.canvases.forEach(canvas => canvas.dataset.state = state || 'idle');
+}
+
+function clearAssistantState() {
+    const status = document.getElementById('voiceAssistantStatus');
+    if (status) {
+        status.classList.remove('active');
+        status.dataset.state = 'idle';
+        status.textContent = '';
+    }
+    voiceAssistantVisual.state = 'idle';
+    voiceAssistantVisual.canvases.forEach(canvas => canvas.dataset.state = 'idle');
+}
+
+function showAssistantMessage(message) {
+    const box = document.getElementById('voiceAssistantMessage');
+    if (!box) return;
+    box.textContent = message || '';
+    box.classList.toggle('active', !!message);
+}
+
+function speakText(text) {
+    try {
+        const input = document.getElementById('assistantTextInput');
+        if (input) input.blur();
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'he-IL';
+        utterance.rate = 1;
+        utterance.pitch = 1;
+        window.speechSynthesis.speak(utterance);
+    } catch (err) {
+        console.warn('Speech synthesis unavailable:', err);
+    }
+}
+
+function getHebrewDayIndex(text) {
+    const normalized = (text || '').replace(/[׳״"']/g, '').trim();
+    const days = [
+        ['ראשון', 'ביום ראשון'],
+        ['שני', 'ביום שני'],
+        ['שלישי', 'ביום שלישי'],
+        ['רביעי', 'ביום רביעי'],
+        ['חמישי', 'ביום חמישי'],
+        ['שישי', 'ביום שישי'],
+        ['שבת', 'בשבת']
+    ];
+    for (let i = 0; i < days.length; i++) {
+        if (days[i].some(d => normalized.includes(d))) return i;
+    }
+    return -1;
+}
+
+function parseSpokenDate(text) {
+    const raw = (text || '').trim();
+    const now = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Jerusalem' }));
+    const today = new Date(now);
+    const tomorrow = new Date(now); tomorrow.setDate(now.getDate() + 1);
+    const todayStr = today.toISOString().split('T')[0];
+    const tomorrowStr = tomorrow.toISOString().split('T')[0];
+
+    if (raw.includes('היום')) return todayStr;
+    if (raw.includes('מחר')) return tomorrowStr;
+
+    const dayIndex = getHebrewDayIndex(raw);
+    if (dayIndex >= 0) {
+        const result = new Date(now);
+        const currentDay = result.getDay();
+        let diff = dayIndex - currentDay;
+        if (raw.includes('הקרוב') || diff <= 0) diff += 7;
+        result.setDate(result.getDate() + diff);
+        return result.toISOString().split('T')[0];
+    }
+
+    const monthNames = {
+        'ינואר': 0, 'פברואר': 1, 'מרץ': 2, 'אפריל': 3, 'מאי': 4, 'יוני': 5,
+        'יולי': 6, 'אוגוסט': 7, 'ספטמבר': 8, 'אוקטובר': 9, 'נובמבר': 10, 'דצמבר': 11
+    };
+    const m = raw.match(/(\d{1,2})\s+ב([א-ת"׳״]+)(?:\s+(\d{4}))?/);
+    if (m) {
+        const day = parseInt(m[1], 10);
+        const monthName = m[2].replace(/[׳״"']/g, '');
+        const year = parseInt(m[3], 10) || now.getFullYear();
+        if (monthNames[monthName] !== undefined) {
+            const d = new Date(year, monthNames[monthName], day);
+            return d.toISOString().split('T')[0];
+        }
+    }
+
+    return '';
+}
+
+function parseSpokenTime(text) {
+    const raw = (text || '').trim().toLowerCase();
+    let m = raw.match(/(?:בשעה|ב)\s*(\d{1,2})(?::(\d{2}))?/);
+    if (m) {
+        const hour = Math.min(23, Math.max(0, parseInt(m[1], 10)));
+        const minute = m[2] ? parseInt(m[2], 10) : 0;
+        return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+    }
+    m = raw.match(/(\d{1,2})\s*(?:ו?[\u05d0-\u05ea]+)?\s*(בבוקר|בצהריים|בערב|בלילה)?/);
+    if (m) {
+        let hour = parseInt(m[1], 10);
+        const period = m[2] || '';
+        if (period.includes('בצהריים') && hour < 12) hour += 12;
+        if ((period.includes('בערב') || period.includes('בלילה')) && hour < 12) hour += 12;
+        if (period.includes('בבוקר') && hour === 12) hour = 0;
+        return `${String(hour).padStart(2, '0')}:00`;
+    }
+    return '';
+}
+
+function normalizeTopicText(text) {
+    return (text || '').replace(/\s+/g, ' ').replace(/[׳״"']/g, '').trim();
+}
+
+function normalizeLevelText(text) {
+    return normalizeTopicText(text)
+        .replace(/\b(אני|רוצה|לקבוע|שיעור|ללמוד|על|בנושא|ב)\b/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
+function getGradeOptions() {
+    const select = document.getElementById('fgrade');
+    if (!select) return [];
+    return Array.from(select.options)
+        .map(option => option.value || option.textContent || '')
+        .filter(Boolean);
+}
+
+function matchGradeFromText(text) {
+    const normalized = normalizeLevelText(text);
+    const options = getGradeOptions();
+    for (const option of options) {
+        const normalizedOption = normalizeLevelText(option);
+        if (!normalizedOption) continue;
+        if (normalized.includes(normalizedOption) || normalizedOption.includes(normalized)) return option;
+    }
+    const gradeSynonyms = [
+        { patterns: ['ז', 'ז\'', 'ז׳'], value: 'כיתה ז׳' },
+        { patterns: ['ח', 'ח\'', 'ח׳'], value: 'כיתה ח׳' },
+        { patterns: ['ט', 'ט\'', 'ט׳'], value: 'כיתה ט׳' },
+        { patterns: ['י א', 'יא', 'י״א', 'י"א', '10'], value: 'כיתה י״א - 3 יח״ל' },
+        { patterns: ['יב', 'י״ב', 'י"ב', '12'], value: 'כיתה י״ב - 3 יח״ל' }
+    ];
+    for (const entry of gradeSynonyms) {
+        if (entry.patterns.some(pattern => normalized.includes(normalizeLevelText(pattern)))) {
+            return entry.value;
+        }
+    }
+    return '';
+}
+
+function getTopicsForGrade(grade) {
+    const topicsByGrade = {
+        'כיתה ז׳': ['מספרים שלמים', 'שברים פשוטים', 'מספרים עשרוניים', 'אחוזים', 'משוואות פשוטות', 'גיאומטריה בסיסית'],
+        'כיתה ח׳': ['פונקציות', 'משוואות', 'מערכת משוואות', 'גיאומטריה', 'אחוזים', 'שטחים והיקפים'],
+        'כיתה ט׳': ['פונקציות', 'משוואות ריבועיות', 'טריגונומטריה', 'גיאומטריה', 'הסתברות', 'סטטיסטיקה'],
+        'כיתה י׳ - 3 יח״ל': ['אלגברה', 'פונקציות', 'משוואות', 'גיאומטריה', 'הסתברות', 'סטטיסטיקה'],
+        'כיתה י׳ - 4 יח״ל': ['פונקציות', 'מערכת משוואות', 'טריגונומטריה', 'הסתברות', 'סטטיסטיקה', 'גיאומטריה'],
+        'כיתה י׳ - 5 יח״ל': ['פונקציות', 'טריגונומטריה', 'הסתברות', 'גיאומטריה', 'חקירה', 'אינדוקציה'],
+        'כיתה י״א - 3 יח״ל': ['גדילה ודעיכה', 'הסתברות', 'גיאומטריה', 'טריגונומטריה במישור', 'סטטיסטיקה', 'פונקציה קווית'],
+        'כיתה י״א - 4 יח״ל': ['סטטיסטיקה', 'הסתברות', 'גאומטרייה', 'חקירה של פולינומים', 'חקירה של פונקציות רציונליות', 'חקירה של פונקציות שורש'],
+        'כיתה י״א - 5 יח״ל': ['שאלות קצרות', 'אינדוקציה', 'סדרות', 'הסתברות', 'גאומטרייה', 'טריגונומטריה במישור', 'חקירה', 'אינטגרלים'],
+        'כיתה י״ב - 3 יח״ל': ['תכנון ליניארי', 'גיאומטריה אנליטית', 'התפלגות נורמלית', 'מודל ריבועי', 'ראייה מרחבית', 'גופים במרחב'],
+        'כיתה י״ב - 4 יח״ל': ['סדרות', 'גיאומטריה במרחב', 'גדילה ודעיכה', 'חקירה מעריכית', 'חקירה לוגריתמית', 'אינטגרלים'],
+        'כיתה י״ב - 5 יח״ל': ['גיאומטריה אנליטית', 'וקטורים', 'טריגונומטריה במרחב', 'מספרים מרוכבים', 'פונקציות מעריכיות', 'פונקציות לוגריתמיות', 'גדילה ודעיכה']
+    };
+    return topicsByGrade[grade] || getTopicsList();
+}
+
+function matchTopicForGrade(text, grade) {
+    const normalized = normalizeTopicText(text);
+    const topics = getTopicsForGrade(grade);
+    for (const topic of topics) {
+        const normalizedTopic = normalizeTopicText(topic);
+        if (!normalizedTopic) continue;
+        if (normalized.includes(normalizedTopic) || normalizedTopic.includes(normalized)) return topic;
+    }
+    return '';
+}
+
+function extractCustomTopicFromText(text) {
+    const raw = normalizeTopicText(text);
+    if (!raw) return '';
+    const match = raw.match(/(?:בנושא|בנושא של|על|ב|ל)\s+([א-ת0-9״"'׳\-\s]+)$/);
+    if (!match) return '';
+    const candidate = match[1]
+        .replace(/[.,!?;:]+$/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+    if (!candidate) return '';
+    const words = candidate.split(' ').filter(Boolean);
+    const banned = ['אני', 'רוצה', 'לקבוע', 'שיעור', 'לעשות', 'צריך', 'צריכה', 'ללמוד', 'עזרה', 'בבקשה'];
+    if (words.length > 6) return '';
+    if (banned.some(word => candidate.includes(word))) return '';
+    return candidate;
+}
+
+function getTopicsList() {
+    const chips = document.querySelectorAll('#topicChips .chip');
+    return Array.from(chips).map(chip => chip.innerText.trim()).filter(Boolean);
+}
+
+function setBookingDate(dateStr) {
+    const dateInput = document.getElementById('fdate');
+    if (dateInput) dateInput.value = dateStr || '';
+    if (dateStr) checkAvailability(dateStr);
+    updateBookingSummary();
+}
+
+function setBookingTime(timeStr) {
+    const slots = document.querySelectorAll('.time-slot');
+    slots.forEach(slot => slot.classList.remove('selected'));
+    const wanted = Array.from(slots).find(slot => slot.innerText.trim() === timeStr);
+    if (wanted) wanted.classList.add('selected');
+    updateBookingSummary();
+}
+
+async function checkVoiceAvailability(dateStr, timeStr) {
+    const bookingSnap = await db.collection('bookings').where('date', '==', dateStr).where('time', '==', timeStr).get();
+    let booked = false;
+    bookingSnap.forEach(doc => {
+        const data = doc.data();
+        if (data.status !== 'בוטל') booked = true;
+    });
+    const availSnap = await db.collection('availability').where('date', '==', dateStr).where('time', '==', timeStr).get();
+    let blocked = false;
+    availSnap.forEach(doc => {
+        const data = doc.data();
+        if (data.isFree === false) blocked = true;
+    });
+    return !(booked || blocked);
+}
+
+function fillAssistantBooking(parsed) {
+    const name = getCurrentStudentName();
+    const fName = document.getElementById('fname');
+    const fEmail = document.getElementById('femail');
+    const fGrade = document.getElementById('fgrade');
+    const comments = document.getElementById('fcomments');
+    if (name && fName) fName.value = name;
+    const currentUser = firebase.auth().currentUser;
+    if (currentUser && fEmail) fEmail.value = currentUser.email || '';
+
+    if (parsed.grade && fGrade) {
+        fGrade.value = parsed.grade;
+        updateTopics(parsed.grade);
+    }
+
+    if (parsed.date) setBookingDate(parsed.date);
+    if (parsed.time) setBookingTime(parsed.time);
+
+    const chips = document.querySelectorAll('#topicChips .chip');
+    chips.forEach(chip => chip.classList.remove('selected'));
+
+    if (parsed.topicMode === 'custom') {
+        chips.forEach(chip => {
+            if (normalizeTopicText(chip.innerText) === 'אחר') chip.classList.add('selected');
+        });
+        if (comments) comments.value = parsed.topicText || '';
+    } else if (parsed.topicMatches && parsed.topicMatches.length) {
+        parsed.topicMatches.forEach(match => {
+            Array.from(chips).forEach(chip => {
+                if (chip.innerText.trim() === match) chip.classList.add('selected');
+            });
+        });
+        if (comments) comments.value = '';
+    }
+}
+
+function scrollToBookingStep(stepNumber) {
+    nextStep(stepNumber);
+    const bookSection = document.getElementById('book');
+    if (bookSection) bookSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+async function handleVoiceTranscript(transcript) {
+    setAssistantState('processing', 'מעבד...');
+    showAssistantMessage(`את/ה אמרת:\n${transcript}`);
+    const input = document.getElementById('assistantTextInput');
+    if (input) input.blur();
+
+    const date = parseSpokenDate(transcript);
+    const time = parseSpokenTime(transcript);
+    const grade = matchGradeFromText(transcript);
+    const topicMatch = matchTopicForGrade(transcript, grade);
+    const customTopic = topicMatch ? '' : extractCustomTopicFromText(transcript);
+    const parsed = {
+        grade,
+        date,
+        time,
+        topicMatches: topicMatch ? [topicMatch] : [],
+        topicMode: topicMatch ? 'known' : (customTopic ? 'custom' : ''),
+        topicText: topicMatch || customTopic
+    };
+
+    fillAssistantBooking(parsed);
+    const commentsEl = document.getElementById('fcomments');
+
+    if (!date || !time) {
+        setAssistantState('busy', 'תפוס - עובר ללוח השעות');
+        const response = 'לא הצלחתי להבין את התאריך או השעה. מעביר אותך לבחירת שעה פנויה.';
+        showAssistantMessage(response);
+        speakText(response);
+        scrollToBookingStep(3);
+        return response;
+    }
+
+    const available = await checkVoiceAvailability(date, time);
+    if (available) {
+        setBookingDate(date);
+        setBookingTime(time);
+        if (!parsed.topicText && commentsEl) commentsEl.value = '';
+        setAssistantState('processing', 'מעדכן הזמנה...');
+        const response = `מצוין, קבעתי לך שיעור ל${date} בשעה ${time}.`;
+        showAssistantMessage(response);
+        speakText(response);
+        showToast(response);
+        scrollToBookingStep(3);
+        setTimeout(() => {
+            const submitBtn = document.getElementById('submitBtn');
+            if (submitBtn) submitBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 350);
+        return response;
+    } else {
+        setAssistantState('busy', 'תפוס - עובר ללוח השעות');
+        const response = 'מצטער, השעה הזו תפוסה. מעביר אותך לבחירת שעה פנויה.';
+        showAssistantMessage(response);
+        speakText(response);
+        setBookingDate(date);
+        scrollToBookingStep(3);
+        return response;
+    }
+}
+
+let voiceRecognition = null;
+let voiceActive = false;
+
+function initVoiceRecognition() {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) return null;
+    const recognition = new SR();
+    recognition.lang = 'he-IL';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    recognition.continuous = false;
+    recognition.onstart = () => setAssistantState('listening', 'מקשיב...');
+    recognition.onerror = (e) => {
+        console.error('Speech recognition error', e);
+        voiceActive = false;
+        setAssistantState('idle', '');
+    };
+    recognition.onend = () => {
+        voiceActive = false;
+        if (document.getElementById('voiceAssistantStatus').dataset.state === 'listening') {
+            clearAssistantState();
+        }
+    };
+    recognition.onresult = async (event) => {
+        const transcript = Array.from(event.results).map(r => r[0].transcript).join(' ').trim();
+        try {
+            await handleVoiceTranscript(transcript);
+        } catch (err) {
+            console.error(err);
+            showToast('לא הצלחתי לעבד את הבקשה הקולית');
+            clearAssistantState();
+        }
+    };
+    return recognition;
+}
+
+function toggleVoiceAssistant() {
+    requestVoiceAssistantAccess();
+}
+
+function requestVoiceAssistantAccess() {
+    if (!isAssistantAuthenticated()) {
+        promptAssistantLogin();
+        return false;
+    }
+    openVoiceAssistantModal();
+    return true;
+}
+
+function startVoiceAssistantListening() {
+    if (!isAssistantAuthenticated()) {
+        promptAssistantLogin();
+        return;
+    }
+    if (!voiceRecognition) {
+        voiceRecognition = initVoiceRecognition();
+    }
+    if (!voiceRecognition) {
+        showToast('הדפדפן לא תומך בזיהוי קולי');
+        return;
+    }
+    if (voiceActive) {
+        voiceRecognition.stop();
+        voiceActive = false;
+        clearAssistantState();
+        return;
+    }
+    voiceActive = true;
+    setAssistantState('listening', 'מקשיב...');
+    voiceRecognition.start();
+}
+
+function handleAssistantTyping() {
+    const input = document.getElementById('assistantTextInput');
+    if (!input) return;
+    if (input.value.trim()) {
+        setAssistantState('typing', 'מקליד...');
+    } else if (voiceAssistantVisual.state === 'typing') {
+        clearAssistantState();
+    }
+}
+
+async function submitAssistantText() {
+    if (!isAssistantAuthenticated()) {
+        promptAssistantLogin();
+        return;
+    }
+    const input = document.getElementById('assistantTextInput');
+    if (!input) return;
+    const text = input.value.trim();
+    if (!text) return;
+    input.blur();
+    setAssistantState('processing', 'מעבד...');
+    showAssistantMessage(`שאלה כתובה:\n${text}`);
+    try {
+        const response = await handleVoiceTranscript(text);
+        if (response) showAssistantMessage(response);
+    } catch (err) {
+        console.error(err);
+        const response = 'אירעה שגיאה בעיבוד השאלה.';
+        showAssistantMessage(response);
+        speakText(response);
+    }
+}
+
+function handleAssistantTextKeydown(event) {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        submitAssistantText();
+    }
+}
+
+function openVoiceAssistantModal() {
+    if (!isAssistantAuthenticated()) {
+        promptAssistantLogin();
+        return;
+    }
+    const overlay = document.getElementById('voiceAssistantOverlay');
+    const input = document.getElementById('assistantTextInput');
+    if (overlay) overlay.classList.add('active');
+    initVoiceAssistantVisual();
+    setAssistantState('idle', '');
+    showAssistantMessage('');
+    if (input) input.value = '';
+    setTimeout(() => {
+        if (input) {
+            input.focus({ preventScroll: true });
+            if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                input.setAttribute('inputmode', 'text');
+            }
+        }
+    }, 60);
+}
+
+function closeVoiceAssistantModal(event) {
+    if (event && event.target && event.currentTarget && event.target !== event.currentTarget) return;
+    const overlay = document.getElementById('voiceAssistantOverlay');
+    if (overlay) overlay.classList.remove('active');
+    const input = document.getElementById('assistantTextInput');
+    if (input) input.blur();
+    if (voiceActive && voiceRecognition) {
+        voiceRecognition.stop();
+        voiceActive = false;
+    }
+    clearAssistantState();
+    showAssistantMessage('');
+    if (input) input.value = '';
+}
+
+function saveProfile(name, phone, email) {
+    if (currentFirebaseUser) {
+        db.collection('users').doc(currentFirebaseUser.uid).set({
+            name: name || currentFirebaseUser.displayName || '',
+            email: email || currentFirebaseUser.email || '',
+            role: 'student',
+            lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true }).catch(err => console.error('Error saving user profile:', err));
+    }
+    applyProfileToBookingForm();
+    updateNavAuth();
+}
+
+// Save user registration to Firebase
+function saveUserToFirebase(name, phone, email) {
+    if (!currentFirebaseUser) return Promise.resolve();
+    const userData = {
+        name: name || currentFirebaseUser.displayName || '',
+        email: email || currentFirebaseUser.email || '',
+        role: 'student',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    return db.collection('users').doc(currentFirebaseUser.uid).set(userData, { merge: true });
+}
+
+function clearProfile() {
+    return auth.signOut();
+}
+
+function updateNavAuth() {
+    const profile = getProfile();
+    const authButtons = document.getElementById('navAuthButtons');
+    const sidebarAuthButtons = document.getElementById('sidebarAuthButtons');
+    const userChip = document.getElementById('navUserChip');
+    const navLogout = document.getElementById('navLogout');
+    if (profile) {
+        if (authButtons) authButtons.style.display = 'none';
+        if (sidebarAuthButtons) sidebarAuthButtons.classList.add('is-hidden');
+        if (userChip) { userChip.style.display = 'flex'; document.getElementById('navUserName').textContent = profile.name; }
+        if (navLogout) navLogout.style.display = 'block';
+    } else {
+        if (authButtons) authButtons.style.display = 'flex';
+        if (sidebarAuthButtons) sidebarAuthButtons.classList.remove('is-hidden');
+        if (userChip) userChip.style.display = 'none';
+        if (navLogout) navLogout.style.display = 'none';
+    }
+}
+
+function syncStudentAuthState(user) {
+    const status = document.getElementById('studentAuthStatus');
+    const nameEl = document.getElementById('studentAuthName');
+    const emailEl = document.getElementById('studentAuthEmail');
+    const loginArea = document.getElementById('loginArea');
+    const authButtons = document.getElementById('authButtons');
+    const loggedInChip = document.getElementById('loggedInChip');
+    const profile = user ? {
+        name: user.displayName || 'תלמיד',
+        email: user.email || ''
+    } : null;
+
+    if (profile) {
+        if (status) status.style.display = 'flex';
+        if (nameEl) nameEl.textContent = profile.name;
+        if (emailEl) emailEl.textContent = profile.email;
+        if (authButtons) authButtons.style.display = 'none';
+        if (loggedInChip) loggedInChip.style.display = 'flex';
+        const fab = document.getElementById('voiceAssistantFab');
+        if (fab) fab.classList.remove('guest-restricted');
+        updateNavAuth();
+        applyProfileToBookingForm();
+        return;
+    }
+
+    if (status) status.style.display = 'none';
+    if (nameEl) nameEl.textContent = '-';
+    if (emailEl) emailEl.textContent = '-';
+    if (authButtons) authButtons.style.display = 'block';
+    if (loggedInChip) loggedInChip.style.display = 'none';
+    if (loginArea) loginArea.style.display = 'block';
+    const fab = document.getElementById('voiceAssistantFab');
+    if (fab) fab.classList.add('guest-restricted');
+    updateNavAuth();
+    applyProfileToBookingForm();
+}
+
+function sidebarShowLogin() {
+    closeMenu();
+    navShowStudentAuth();
+}
+
+function sidebarShowRegister() {
+    closeMenu();
+    navShowStudentAuth();
+}
+
+function navShowLogin() {
+    navShowStudentAuth();
+}
+
+function navShowRegister() {
+    navShowStudentAuth();
+}
+
+function navShowStudentAuth() {
+    if (getProfile()) { openStudentArea(); return; }
+    document.getElementById('student-auth-modal').style.display = 'flex';
+    syncStudentAuthState(currentFirebaseUser);
+}
+
+// Sanitize phone number: remove spaces, dashes, and convert +972 to 0
+function sanitizePhoneNumber(phone) {
+    if (!phone) return '';
+    // Remove spaces and dashes
+    let cleaned = phone.replace(/[\s-]/g, '');
+    // Convert +972 country code to 0
+    if (cleaned.startsWith('+972')) {
+        cleaned = '0' + cleaned.slice(4);
+    }
+    return cleaned;
+}
+
+function showModalLogin() {
+    navShowStudentAuth();
+}
+
+function showModalRegister() {
+    navShowStudentAuth();
+}
+
+function closeStudentAuthModal() {
+    document.getElementById('student-auth-modal').style.display = 'none';
+}
+
+function signInWithGoogle() {
+    auth.signInWithPopup(googleProvider)
+        .then((result) => {
+            currentFirebaseUser = result.user;
+            syncStudentAuthState(result.user);
+            saveUserToFirebase(result.user.displayName || '', '', result.user.email || '');
+            closeStudentAuthModal();
+            showToast('שלום ' + (result.user.displayName || 'תלמיד') + '!');
+        })
+        .catch((err) => {
+            console.error('Google sign-in failed:', err);
+            showToast('התחברות עם Google נכשלה, נסה שוב');
+        });
+}
+
+function sidebarLogout() {
+    closeMenu();
+    logoutProfile();
+}
+
+/* ── Auth screen navigation ── */
+function showAuthButtons() {
+    document.getElementById('authButtons').style.display = 'block';
+    document.getElementById('loggedInChip').style.display = 'none';
+    updateNavAuth();
+}
+
+function showLoginForm() {
+    navShowStudentAuth();
+}
+
+function showRegisterForm() {
+    navShowStudentAuth();
+}
+
+function showLoggedInChip(name, phone) {
+    document.getElementById('authButtons').style.display = 'none';
+    const chip = document.getElementById('loggedInChip');
+    chip.style.display = 'flex';
+    document.getElementById('loggedInName').textContent = name;
+    document.getElementById('loggedInPhone').textContent = phone || '';
+    updateNavAuth();
+}
+
+/* ── Auth actions ── */
+function submitLogin() {
+    navShowStudentAuth();
+}
+
+function submitRegister() {
+    navShowStudentAuth();
+}
+
+function logoutProfile() {
+    clearProfile();
+    sessionPhone = '';
+    document.getElementById('lessonsResult').style.display = 'none';
+    document.getElementById('loginArea').style.display = 'block';
+    const refreshBtn = document.getElementById('refreshStudentBtn');
+    if (refreshBtn) refreshBtn.style.display = 'none';
+    const wb = document.getElementById('welcomeBanner');
+    if (wb) wb.style.display = 'none';
+    showAuthButtons();
+    applyProfileToBookingForm();
+}
+
+function switchUser() {
+    showConfirm('לנתק את הפרופיל הנוכחי ולהתחבר עם מספר אחר?', logoutProfile);
+}
+
+function applyProfileToBookingForm() {
+    const profile = getProfile();
+    const nameInput = document.getElementById('fname');
+    const phoneInput = document.getElementById('fphone');
+    const emailInput = document.getElementById('femail');
+    const identityFields = document.getElementById('step1IdentityFields');
+    const summaryBar = document.getElementById('profileSummaryBar');
+    if (!nameInput || !phoneInput) return;
+
+    if (profile) {
+        nameInput.value = profile.name;
+        if (profile.email && emailInput) emailInput.value = profile.email;
+
+        if (identityFields) identityFields.style.display = 'none';
+        if (summaryBar) {
+            summaryBar.style.display = 'flex';
+            document.getElementById('psbName').textContent = profile.name;
+            document.getElementById('psbPhone').textContent = profile.email || '';
+        }
+    } else {
+        nameInput.value = '';
+        if (emailInput) emailInput.value = '';
+        if (identityFields) identityFields.style.display = 'block';
+        if (summaryBar) summaryBar.style.display = 'none';
+    }
+}
+
+function fetchMyLessons() {
+    const profile = getProfile();
+    const user = firebase.auth().currentUser;
+    const phone = (profile && profile.phone) || sessionPhone;
+    if (!user && !phone) {
+        showToast('נא להתחבר תחילה');
+        return;
+    }
+    sessionPhone = phone || sessionPhone;
+
+    const list = document.getElementById('lessonsList');
+    const resultArea = document.getElementById('lessonsResult');
+    const loginArea = document.getElementById('loginArea');
+    const refreshBtn = document.getElementById('refreshStudentBtn');
+
+    list.innerHTML = '<p style="text-align:center; padding: 2rem;">טוען את השיעורים שלך...</p>';
+    loginArea.style.display = 'none';
+    resultArea.style.display = 'block';
+    if (refreshBtn) refreshBtn.style.display = 'flex';
+
+    const wb = document.getElementById('welcomeBanner');
+    const query = user
+        ? db.collection("bookings").where("studentId", "==", user.uid).get()
+        : db.collection("bookings").where("phone", "==", phone).get();
+
+    query.then(snap => {
+        if (snap.empty && user && user.email) {
+            return db.collection("bookings").where("studentEmail", "==", user.email).get();
+        }
+        return snap;
+    }).then(snap => {
+        if (!snap || snap.empty) {
+            list.innerHTML = '<div style="text-align:center; padding: 2rem; opacity:0.7">לא נמצאו שיעורים עתידיים.</div>';
+            if (wb) wb.style.display = 'none';
+            fetchStudentTasks();
+            return;
+        }
+
+        let lessons = [];
+        snap.forEach(doc => lessons.push({ id: doc.id, ...doc.data() }));
+        lessons.sort((a, b) => new Date(b.date + 'T' + b.time) - new Date(a.date + 'T' + a.time));
+
+        // Filter by name if profile exists (data integrity)
+        const profile = getProfile();
+        if (profile && profile.name) {
+            lessons = lessons.filter(l => l.name && l.name.trim() === profile.name.trim());
+        }
+        if (lessons.length === 0) {
+            list.innerHTML = '<div style="text-align:center; padding: 2rem; opacity:0.7">לא נמצאו שיעורים עתידיים.</div>';
+            if (wb) wb.style.display = 'none';
+            fetchStudentTasks();
+            return;
+        }
+
+        // Welcome banner with name + phone
+        const studentName = lessons[0].name || '';
+        const displayPhone = profile ? profile.phone : phone;
+        if (wb && studentName) {
+            wb.innerHTML = `<span style="font-size:1.05rem">שלום <span class="welcome-name">${studentName}</span>, מציג את השיעורים שלך <span style="color:var(--text-muted);font-size:0.9rem">(${displayPhone})</span> 👋</span>`;
+            wb.style.display = 'block';
+        }
+
+        // Upcoming: today or tomorrow (Israel time)
+        const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Jerusalem" }));
+        const todayStr = now.toISOString().split('T')[0];
+        const tom = new Date(now); tom.setDate(now.getDate() + 1);
+        const tomorrowStr = tom.toISOString().split('T')[0];
+
+        let html = '';
+        lessons.forEach(b => {
+            const statusClass = b.status === 'מאושר' ? 'approved' : (b.status === 'בוטל' ? 'cancelled' : 'pending');
+            const displayStatus = b.status === 'ממתין' ? 'ממתין לאישור' : b.status;
+            const badgeClass = b.status === 'מאושר' ? 'ok' : (b.status === 'בוטל' ? 'cancel' : 'wait');
+            const isUpcoming = b.status === 'מאושר' && (b.date === todayStr || b.date === tomorrowStr);
+            const upcomingClass = isUpcoming ? ' upcoming' : '';
+            const soonBadge = isUpcoming ? '<span class="badge-soon">בקרוב</span>' : '';
+            const gcalLink = b.status === 'מאושר'
+                ? `<a href="${buildGCalLink(b)}" target="_blank" class="gcal-link"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>הוסף ליומן</a>`
+                : '';
+            html += `
+                <div class="lesson-ticket ${statusClass}${upcomingClass}">
+                    <div class="ticket-stripe"></div>
+                    <div class="ticket-body">
+                        <div class="ticket-left">
+                            <div class="ticket-date">${b.date}</div>
+                            <div class="ticket-time">${b.time}</div>
+                            ${gcalLink}
+                        </div>
+                        <div class="ticket-divider"></div>
+                        <div class="ticket-right">
+                            <div class="ticket-topic">${soonBadge}${b.topic}</div>
+                            <div class="ticket-grade">רמה: ${b.grade}</div>
+                        </div>
+                        <div class="ticket-badge-wrap">
+                            <span class="badge ${badgeClass}">${displayStatus}</span>
+                        </div>
+                    </div>
+                    ${b.status !== 'בוטל' ? `<div class="ticket-footer"><button class="cancel-lesson-btn" onclick="cancelMyLesson('${b.id}')">ביטול שיעור ×</button></div>` : ''}
+                </div>
+            `;
+        });
+        list.innerHTML = html;
+        fetchStudentTasks();
+    }).catch(err => {
+        console.error(err);
+        showToast('שגיאה בטעינת השיעורים');
+        backToLogin();
+    });
+}
+
+function cancelMyLesson(bookingId) {
+    showConfirm('האם לבטל את השיעור? לא ניתן לבטל פחות מ-24 שעות לפני.', () => {
+        db.collection("bookings").doc(bookingId).get().then(doc => {
+            if (!doc.exists) return;
+            const b = doc.data();
+            db.collection("bookings").doc(bookingId).update({ status: "בוטל" }).then(() => {
+                sendCancellationEmails(b);
+                showToast('השיעור בוטל — נשלחה הודעה במייל');
+                fetchMyLessons();
+            });
+        }).catch(() => showToast('שגיאה בביטול השיעור'));
+    });
+}
+
+function sendCancellationEmails(b) {
+    const base = {
+        student_name: b.name || '',
+        date: b.date || '',
+        time: b.time || '',
+        topic: b.topic || '',
+        grade: b.grade || '',
+        phone: b.phone || '',
+        email: b.email || '',
+        lesson_format: b.lessonFormat || '',
+        user_comments: 'השיעור בוטל על ידי התלמיד',
+        type: 'ביטול שיעור'
+    };
+    // Admin
+    emailjs.send("service_uiiqhnd", "template_e6swvbo", { ...base, to_email: "nooam.gabay@gmail.com" }, "JI7HdPnpg063aq0Pl");
+    // Student
+    if (b.email) {
+        emailjs.send("service_uiiqhnd", "template_e6swvbo", { ...base, to_email: b.email }, "JI7HdPnpg063aq0Pl");
+    }
+}
+
+function backToLogin() {
+    document.getElementById('lessonsResult').style.display = 'none';
+    document.getElementById('loginArea').style.display = 'block';
+    const refreshBtn = document.getElementById('refreshStudentBtn');
+    if (refreshBtn) refreshBtn.style.display = 'none';
+
+    const profile = getProfile();
+    if (profile) {
+        showLoggedInChip(profile.name, profile.phone);
+    } else {
+        sessionPhone = '';
+        showAuthButtons();
+    }
+}
+
+function openStudentArea() {
+    logoutAdminNoConfirm();
+    document.getElementById('book').classList.add('admin-hidden');
+    document.getElementById('hero').classList.add('admin-hidden');
+    document.getElementById('my-lessons').style.display = 'flex';
+    window.scrollTo(0,0);
+
+    const profile = getProfile();
+    if (profile) {
+        showLoggedInChip(profile.name, profile.phone);
+        sessionPhone = profile.phone;
+        fetchMyLessons();
+        fetchStudentTasks();
+    } else {
+        showAuthButtons();
+    }
+}
+
+function logoutStudent() {
+    document.getElementById('book').classList.remove('admin-hidden');
+    document.getElementById('hero').classList.remove('admin-hidden');
+    document.getElementById('my-lessons').style.display = 'none';
+}
+function logoutAdminNoConfirm() {
+    document.getElementById('adminDashboard').style.display = 'none';
+    document.getElementById('book').classList.remove('admin-hidden');
+    document.getElementById('hero').classList.remove('admin-hidden');
+    
+    document.querySelectorAll('.sym').forEach(s => s.style.animationPlayState = 'running');
+    document.querySelectorAll('.math-bg').forEach(b => b.style.display = 'block');
+}
+
+function togglePass() {
+  const input = document.getElementById('adminPass');
+  input.type = input.type === 'password' ? 'text' : 'password';
+}
+
+// Sidebar Menu Logic
+function toggleMenu() {
+    document.getElementById('sidebarMenu').classList.toggle('active');
+    document.getElementById('sidebarOverlay').classList.toggle('active');
+    document.getElementById('hamburgerBtn').classList.toggle('active');
+}
+
+function closeMenu() {
+    document.getElementById('sidebarMenu').classList.remove('active');
+    document.getElementById('sidebarOverlay').classList.remove('active');
+    document.getElementById('hamburgerBtn').classList.remove('active');
+}
+
+function closeMenuAndLogoutAdmin() {
+    closeMenu();
+    logoutAdmin();
+}
+
+function closeMenuAndOpenStudentArea() {
+    closeMenu();
+    openStudentArea();
+}
+
+function logoutAdmin() {
+  if (unsubBookings) { unsubBookings(); unsubBookings = null; }
+  document.getElementById('adminDashboard').style.display = 'none';
+  document.getElementById('hero').classList.remove('admin-hidden');
+  document.getElementById('book').classList.remove('admin-hidden');
+  
+  document.querySelectorAll('.sym').forEach(s => s.style.animationPlayState = 'running');
+  document.querySelectorAll('.math-bg').forEach(b => b.style.display = 'block');
+}
+
+let unsubBookings = null;
+let selectedTaskLesson = null;
+
+function getLessonEndDateTime(lesson) {
+  const endTime = lesson.endTime || (() => {
+    if (!lesson.time) return '';
+    const parts = lesson.time.split(':');
+    const endHour = String(parseInt(parts[0], 10) + (lesson.durationHours || 1)).padStart(2, '0');
+    return `${endHour}:${parts[1] || '00'}`;
+  })();
+  return lesson.date && endTime ? new Date(`${lesson.date}T${endTime}:00`) : null;
+}
+
+function isLessonPast(lesson) {
+  const endDate = getLessonEndDateTime(lesson);
+  if (!endDate) return false;
+  const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Jerusalem" }));
+  return now > endDate;
+}
+
+function openTaskModal(lesson) {
+  selectedTaskLesson = lesson;
+  document.getElementById('taskStudentName').value = lesson.name || '';
+  document.getElementById('taskLessonDetails').value = `${lesson.date || ''} ${lesson.time || ''} | ${lesson.subject || lesson.topic || ''}`;
+  document.getElementById('taskTitle').value = '';
+  document.getElementById('taskDescription').value = '';
+  document.getElementById('taskDueDate').value = '';
+  document.getElementById('taskFile').value = '';
+  document.getElementById('taskFileName').textContent = '';
+  document.getElementById('taskModal').style.display = 'flex';
+}
+
+function closeTaskModal() {
+  selectedTaskLesson = null;
+  document.getElementById('taskModal').style.display = 'none';
+}
+
+function handleTaskFileName() {
+  const input = document.getElementById('taskFile');
+  const fileNameEl = document.getElementById('taskFileName');
+  if (fileNameEl) fileNameEl.textContent = input && input.files && input.files[0] ? input.files[0].name : '';
+}
+
+async function uploadTaskAttachment(file, lesson) {
+  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+  const path = `task_attachments/${lesson.studentId || lesson.phone || 'unknown'}/${Date.now()}_${safeName}`;
+  const ref = storage.ref().child(path);
+  await ref.put(file);
+  return { fileUrl: await ref.getDownloadURL(), fileName: file.name };
+}
+
+async function saveAndSendTask() {
+  if (!selectedTaskLesson) return;
+  const title = document.getElementById('taskTitle').value.trim();
+  const description = document.getElementById('taskDescription').value.trim();
+  const dueDate = document.getElementById('taskDueDate').value || '';
+  const fileInput = document.getElementById('taskFile');
+  const file = fileInput && fileInput.files ? fileInput.files[0] : null;
+  if (!title || !description) {
+    showToast('נא למלא כותרת ותיאור למשימה');
+    return;
+  }
+  try {
+    const currentUser = firebase.auth().currentUser;
+    const studentId = selectedTaskLesson.studentId || selectedTaskLesson.uid || selectedTaskLesson.phone || selectedTaskLesson.email || selectedTaskLesson.name;
+    const studentEmail = selectedTaskLesson.email || '';
+    let attachment = {};
+    if (file) attachment = await uploadTaskAttachment(file, { ...selectedTaskLesson, studentId });
+    const taskData = {
+      studentId,
+      studentEmail,
+      studentName: selectedTaskLesson.name || '',
+      lessonId: selectedTaskLesson.id || '',
+      lessonDate: selectedTaskLesson.date || '',
+      lessonTime: selectedTaskLesson.time || '',
+      taskTitle: title,
+      taskDescription: description,
+      fileUrl: attachment.fileUrl || '',
+      fileName: attachment.fileName || '',
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      status: 'pending',
+      dueDate: dueDate || '',
+      createdBy: currentUser ? currentUser.uid : 'admin'
+    };
+    const docRef = await db.collection('tasks').add(taskData);
+    await db.collection('bookings').doc(selectedTaskLesson.id).set({ taskId: docRef.id }, { merge: true });
+    const emailBody = [
+      `היי ${selectedTaskLesson.name || ''},`,
+      'נוספה לך משימה חדשה בעקבות השיעור האחרון שלנו.',
+      attachment.fileUrl ? `צורף קובץ לצפייה: ${attachment.fileUrl}` : '',
+      'כנס לאזור האישי שלך באתר כדי לצפות במשימה ולהשלים אותה.'
+    ].filter(Boolean).join('\n\n');
+    emailjs.send("service_uiiqhnd", "template_e6swvbo", {
+      to_email: studentEmail,
+      student_name: selectedTaskLesson.name || '',
+      subject: 'מחכה לך משימה חדשה במתמטיקה! 📝',
+      message: emailBody,
+      task_title: title,
+      task_description: description,
+      file_url: attachment.fileUrl || ''
+    }, "JI7HdPnpg063aq0Pl").catch(err => console.error('Task email error:', err));
+    showToast('המשימה נשמרה ונשלחה לתלמיד');
+    closeTaskModal();
+    renderAdminBookings();
+    fetchStudentTasks();
+  } catch (err) {
+    console.error(err);
+    showToast('שגיאה בשמירת המשימה');
+  }
+}
+
+function markTaskCompleted(taskId) {
+  db.collection('tasks').doc(taskId).update({ status: 'completed', completedAt: firebase.firestore.FieldValue.serverTimestamp() })
+    .then(() => {
+      showToast('המשימה סומנה כהושלמה');
+      fetchStudentTasks();
+    })
+    .catch(() => showToast('שגיאה בעדכון המשימה'));
+}
+
+function fetchStudentTasks() {
+  const list = document.getElementById('studentTasksList');
+  const user = firebase.auth().currentUser;
+  if (!list) return;
+  if (!user) {
+    list.innerHTML = '<p style="color:var(--text-muted); text-align:center;">נא להתחבר כדי לצפות במשימות.</p>';
+    return;
+  }
+  list.innerHTML = '<p style="color:var(--text-muted); text-align:center;">טוען משימות...</p>';
+  db.collection('tasks').where('studentId', '==', user.uid).where('status', '==', 'pending').get()
+    .then(snapshot => {
+      const tasks = [];
+      snapshot.forEach(doc => tasks.push({ id: doc.id, ...doc.data() }));
+      tasks.sort((a, b) => {
+        const at = a.createdAt && a.createdAt.toDate ? a.createdAt.toDate().getTime() : 0;
+        const bt = b.createdAt && b.createdAt.toDate ? b.createdAt.toDate().getTime() : 0;
+        return bt - at;
+      });
+      if (!tasks.length) {
+        list.innerHTML = '<p style="color:var(--text-muted); text-align:center;">אין משימות פתוחות כרגע.</p>';
+        return;
+      }
+      list.innerHTML = '';
+      tasks.forEach(task => {
+        const card = document.createElement('div');
+        card.className = 'task-card';
+        card.innerHTML = `
+          <strong>${task.taskTitle || ''}</strong>
+          <div class="task-meta">${task.lessonDate || ''} ${task.lessonTime || ''}</div>
+          <div class="task-desc">${task.taskDescription || ''}</div>
+          ${task.fileUrl ? `<a class="btn btn-sm btn-outline" href="${task.fileUrl}" target="_blank" rel="noopener noreferrer">📄 לצפייה בקובץ המצורף</a>` : ''}
+          <div class="task-actions-row">
+            <button class="btn btn-sm" onclick="markTaskCompleted('${task.id}')">סימנתי כהושלם</button>
+          </div>
+        `;
+        list.appendChild(card);
+      });
+    })
+    .catch(err => {
+      console.error(err);
+      list.innerHTML = '<p style="color:var(--text-muted); text-align:center;">שגיאה בטעינת המשימות.</p>';
+    });
+}
+
+function renderAdminBookings() {
+  if (unsubBookings) unsubBookings();
+  const list = document.getElementById('adminBookingsList');
+  list.innerHTML = '<p style="color:rgba(255,255,255,0.5)">טוען שיעורים...</p>';
+  unsubBookings = db.collection("bookings").orderBy("date").onSnapshot(snapshot => {
+    list.innerHTML = '';
+    const bookings = [];
+    snapshot.forEach(doc => {
+      const b = { id: doc.id, ...doc.data() };
+      bookings.push(b);
+      const div = document.createElement('div');
+      div.className = 'schedule-item glass';
+      if (b.status === 'מאושר') div.classList.add('approved');
+      else if (b.status === 'בוטל') div.classList.add('cancelled');
+
+      let statusBadge = b.status === 'מאושר' ? `<span class="badge ok">מאושר</span>` : b.status === 'בוטל' ? `<span class="badge cancel">בוטל</span>` : `<span class="badge wait">ממתין לאישור</span>`;
+      let actionBtns = '';
+      if (b.status === 'בוטל') {
+          actionBtns = `
+            <button class="btn btn-mini" onclick="restoreBookingDB('${doc.id}')">שחזר</button>
+            <button class="btn btn-mini btn-danger" onclick="permanentlyDeleteDB('${doc.id}')">מחק</button>
+            <button class="btn btn-mini btn-danger" onclick='deleteFromCalendar(${JSON.stringify(b).replace(/'/g, "&#39;")})'>מחק מגוגל קלנדר</button>
+          `;
+      } else {
+          actionBtns = `
+            <button class="btn btn-mini btn-outline" onclick="startReschedule('${doc.id}', '${b.name}')">הזז שיעור</button>
+            <button class="btn btn-mini btn-danger" onclick="cancelBookingDB('${doc.id}', this)">בטל שיעור</button>
+          `;
+          if (b.status === 'ממתין') {
+              actionBtns = `<button class="btn btn-mini btn-outline" onclick="approveBookingDB('${doc.id}', this)">אשר שיעור</button>` + actionBtns;
+          }
+      }
+      const lessonPast = isLessonPast(b);
+      const taskBtn = lessonPast && b.status !== 'בוטל'
+        ? `<button class="btn btn-mini btn-outline" onclick='openTaskModal(${JSON.stringify(b).replace(/'/g, "&#39;")})'>הוסף משימה</button>`
+        : '';
+      div.innerHTML = `<div class="schedule-info"><strong>${b.name || ''} - ${b.phone || ''}</strong><span>${b.grade || ''} | ${b.subject || b.topic || ''} | ${b.lessonFormat || ''} | ${b.date || ''}, ${b.time || ''}</span></div><div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">${statusBadge}${taskBtn}${actionBtns}</div>`;
+      list.appendChild(div);
+    });
+    if (snapshot.empty) list.innerHTML = '<p style="color:rgba(255,255,255,0.5);text-align:center">אין שיעורים עדיין</p>';
+    updateAdminStats(bookings);
+  });
+}
+
+function updateAdminStats(bookings) {
+  const activeBookings = bookings.filter(b => b.status !== 'בוטל');
+  const now = new Date();
+
+  // 1. Lessons this week (Sunday 00:00:00 to Saturday 23:59:59)
+  const currentDay = now.getDay();
+  const startOfWeek = new Date(now);
+  startOfWeek.setDate(now.getDate() - currentDay);
+  startOfWeek.setHours(0,0,0,0);
+  const endOfWeek = new Date(startOfWeek);
+  endOfWeek.setDate(startOfWeek.getDate() + 7);
+  endOfWeek.setHours(0,0,0,0);
+
+  const lessonsThisWeek = activeBookings.filter(b => {
+    if (!b.date) return false;
+    const bDate = new Date(b.date);
+    bDate.setHours(0,0,0,0);
+    return bDate >= startOfWeek && bDate < endOfWeek;
+  }).length;
+
+  // 2. Lessons this month
+  const lessonsThisMonth = activeBookings.filter(b => {
+    if (!b.date) return false;
+    const bDate = new Date(b.date);
+    return bDate.getFullYear() === now.getFullYear() && bDate.getMonth() === now.getMonth();
+  }).length;
+
+  // 3. Unique students (based on name or phone, using set)
+  const uniqueStudents = new Set();
+  activeBookings.forEach(b => {
+    const key = (b.phone || b.name || '').trim();
+    if (key) uniqueStudents.add(key);
+  });
+  const totalUniqueStudents = uniqueStudents.size;
+
+  // 4. Pending approvals (status === 'ממתין')
+  const pendingApprovals = bookings.filter(b => b.status === 'ממתין').length;
+
+  // Update DOM metrics
+  document.getElementById('statLessonsWeek').innerText = lessonsThisWeek;
+  document.getElementById('statLessonsMonth').innerText = lessonsThisMonth;
+  document.getElementById('statUniqueStudents').innerText = totalUniqueStudents;
+  document.getElementById('statPendingApprovals').innerText = pendingApprovals;
+
+  // --- 8 WEEKS BAR CHART ---
+  const weeksData = [];
+  for (let i = 7; i >= 0; i--) {
+    const start = new Date(startOfWeek);
+    start.setDate(startOfWeek.getDate() - (i * 7));
+    const end = new Date(start);
+    end.setDate(start.getDate() + 7);
+    const label = start.getDate() + '/' + (start.getMonth() + 1);
+    weeksData.push({ start, end, label, count: 0 });
+  }
+
+  activeBookings.forEach(b => {
+    if (!b.date) return;
+    const bDate = new Date(b.date);
+    bDate.setHours(0,0,0,0);
+    for (const wk of weeksData) {
+      if (bDate >= wk.start && bDate < wk.end) {
+        wk.count++;
+        break;
+      }
+    }
+  });
+
+  const barLabels = weeksData.map(wk => wk.label);
+  const barCounts = weeksData.map(wk => wk.count);
+
+  const isLight = document.body.classList.contains('light-mode');
+  const textColor = isLight ? '#121212' : '#e8e8e8';
+  const gridColor = isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.06)';
+
+  const weeklyCtx = document.getElementById('weeklyLessonsChart').getContext('2d');
+
+  if (weeklyChartInstance) {
+    weeklyChartInstance.data.labels = barLabels;
+    weeklyChartInstance.data.datasets[0].data = barCounts;
+    weeklyChartInstance.options.scales.x.ticks.color = textColor;
+    weeklyChartInstance.options.scales.y.ticks.color = textColor;
+    weeklyChartInstance.options.scales.x.grid.color = gridColor;
+    weeklyChartInstance.options.scales.y.grid.color = gridColor;
+    weeklyChartInstance.update();
+  } else {
+    weeklyChartInstance = new Chart(weeklyCtx, {
+      type: 'bar',
+      data: {
+        labels: barLabels,
+        datasets: [{
+          label: 'שיעורים',
+          data: barCounts,
+          backgroundColor: '#c9a84c',
+          borderColor: '#ffcc33',
+          borderWidth: 1,
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          x: {
+            ticks: { color: textColor, font: { family: 'Heebo' } },
+            grid: { color: gridColor }
+          },
+          y: {
+            ticks: {
+              color: textColor,
+              font: { family: 'Heebo' },
+              stepSize: 1,
+              precision: 0
+            },
+            grid: { color: gridColor },
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  }
+
+  // --- TOPIC DONUT CHART ---
+  const topicCounts = {};
+  activeBookings.forEach(b => {
+    const topic = (b.subject || b.topic || 'אחר').trim();
+    topicCounts[topic] = (topicCounts[topic] || 0) + 1;
+  });
+
+  const topicLabels = Object.keys(topicCounts);
+  const topicData = Object.values(topicCounts);
+
+  const topicCtx = document.getElementById('topicDistributionChart').getContext('2d');
+  const donutColors = ['#c9a84c', '#ffcc33', '#dfc377', '#917027', '#e69922', '#5c4514', '#b3923b'];
+
+  if (topicChartInstance) {
+    topicChartInstance.data.labels = topicLabels;
+    topicChartInstance.data.datasets[0].data = topicData;
+    topicChartInstance.options.plugins.legend.labels.color = textColor;
+    topicChartInstance.update();
+  } else {
+    topicChartInstance = new Chart(topicCtx, {
+      type: 'doughnut',
+      data: {
+        labels: topicLabels,
+        datasets: [{
+          data: topicData,
+          backgroundColor: donutColors,
+          borderColor: isLight ? '#ffffff' : '#161616',
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              color: textColor,
+              font: { family: 'Heebo', size: 11 },
+              boxWidth: 12
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // --- TOP 3 ACTIVE STUDENTS LIST ---
+  const studentLessonsCount = {};
+  activeBookings.forEach(b => {
+    const name = (b.name || '').trim();
+    if (name) {
+      studentLessonsCount[name] = (studentLessonsCount[name] || 0) + 1;
+    }
+  });
+
+  const topStudents = Object.entries(studentLessonsCount)
+    .map(([name, count]) => ({ name, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 3);
+
+  const topListEl = document.getElementById('topStudentsList');
+  topListEl.innerHTML = '';
+
+  if (topStudents.length === 0) {
+    topListEl.innerHTML = '<p style="color:var(--text-muted); text-align:center; font-size:0.95rem;">אין נתוני תלמידים</p>';
+  } else {
+    topStudents.forEach((student, idx) => {
+      const row = document.createElement('div');
+      row.style.display = 'flex';
+      row.style.justifyContent = 'space-between';
+      row.style.alignItems = 'center';
+      row.style.padding = '0.8rem 1rem';
+      row.style.background = isLight ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.03)';
+      row.style.border = '1px solid var(--border)';
+      row.style.borderRadius = '12px';
+
+      const rankColors = ['#ffcc33', '#c9a84c', '#dfc377'];
+      const rankColor = rankColors[idx] || 'var(--text-muted)';
+
+      row.innerHTML = `
+        <div style="display:flex; align-items:center; gap:0.8rem;">
+          <span style="display:flex; align-items:center; justify-content:center; width:24px; height:24px; border-radius:50%; background:${rankColor}; color:#000; font-weight:bold; font-size:0.9rem;">
+            ${idx + 1}
+          </span>
+          <strong style="color:var(--text);">${student.name}</strong>
+        </div>
+        <span style="color:var(--gold); font-weight:600;">${student.count} שיעורים</span>
+      `;
+      topListEl.appendChild(row);
+    });
+  }
+}
+
+function updateChartColors() {
+  const isLight = document.body.classList.contains('light-mode');
+  const textColor = isLight ? '#121212' : '#e8e8e8';
+  const gridColor = isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.06)';
+
+  if (weeklyChartInstance) {
+    weeklyChartInstance.options.scales.x.ticks.color = textColor;
+    weeklyChartInstance.options.scales.y.ticks.color = textColor;
+    weeklyChartInstance.options.scales.x.grid.color = gridColor;
+    weeklyChartInstance.options.scales.y.grid.color = gridColor;
+    weeklyChartInstance.update();
+  }
+  if (topicChartInstance) {
+    topicChartInstance.options.plugins.legend.labels.color = textColor;
+    topicChartInstance.options.datasets[0].borderColor = isLight ? '#ffffff' : '#161616';
+    topicChartInstance.update();
+  }
+}
+
+// Observe theme class changes
+const themeObserver = new MutationObserver(mutations => {
+  mutations.forEach(mutation => {
+    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+      updateChartColors();
+    }
+  });
+});
+themeObserver.observe(document.body, { attributes: true });
+
+function renderAvailGrid() {
+  const days = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
+  const today = new Date();
+  const dayOfWeek = today.getDay();
+  const sunday = new Date(today);
+  sunday.setDate(today.getDate() - dayOfWeek + (currentWeekOffset * 7));
+
+  const cols = document.querySelectorAll('.avail-col');
+  cols.forEach((col, i) => {
+    const d = new Date(sunday);
+    d.setDate(sunday.getDate() + i);
+    const dateISO = d.toISOString().split('T')[0];
+    const dateDisplay = d.getDate() + '/' + (d.getMonth() + 1);
+    col.querySelector('h3').innerText = days[i] + '\n' + dateDisplay;
+    col.querySelector('h3').style.whiteSpace = 'pre';
+    col.querySelector('h3').dataset.date = dateISO;
+
+    col.querySelectorAll('.avail-slot').forEach(slot => {
+      slot.classList.add('free');
+      slot.classList.remove('booked');
+      slot.onmouseover = null;
+      slot.onmouseout = null;
+    });
+  });
+
+  const start = new Date(sunday).toISOString().split('T')[0];
+  const end = new Date(sunday);
+  end.setDate(sunday.getDate() + 7);
+  const endStr = end.toISOString().split('T')[0];
+
+  // Fetch Bookings for current week to show in grid
+  db.collection("bookings").where("date", ">=", start).where("date", "<", endStr).get().then(bookingSnap => {
+      const weekBookings = [];
+      bookingSnap.forEach(d => {
+          const b = d.data();
+          if(b.status !== 'בוטל') weekBookings.push(b);
+      });
+
+      db.collection("availability")
+        .where("date", ">=", start)
+        .where("date", "<", endStr)
+        .get().then(snapshot => {
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            cols.forEach(col => {
+              if (col.querySelector('h3').dataset.date === data.date) {
+                col.querySelectorAll('.avail-slot').forEach(slot => {
+                  if (slot.innerText.trim() === data.time) {
+                    if (data.isFree) slot.classList.add('free');
+                    else slot.classList.remove('free');
+                  }
+                });
+              }
+            });
+          });
+
+          // Overlay bookings onto grid
+          weekBookings.forEach(b => {
+              cols.forEach(col => {
+                  if (col.querySelector('h3').dataset.date === b.date) {
+                      col.querySelectorAll('.avail-slot').forEach(slot => {
+                          if (slot.innerText.trim() === b.time) {
+                              slot.classList.remove('free');
+                              slot.classList.add('booked');
+                              slot.onmouseover = (e) => showSlotTooltip(e, b);
+                              slot.onmouseout = hideSlotTooltip;
+                          }
+                      });
+                  }
+              });
+          });
+        });
+  });
+}
+
+function showSlotTooltip(e, b) {
+    let t = document.getElementById('slot-tooltip');
+    if (!t) {
+        t = document.createElement('div');
+        t.id = 'slot-tooltip';
+        t.className = 'slot-tooltip';
+        document.body.appendChild(t);
+    }
+    t.innerHTML = `<strong>${b.name}</strong><span>${b.topic}</span>`;
+    t.style.display = 'block';
+    t.style.left = (e.pageX + 10) + 'px';
+    t.style.top = (e.pageY - 40) + 'px';
+}
+function hideSlotTooltip() {
+    const t = document.getElementById('slot-tooltip');
+    if (t) t.style.display = 'none';
+}
+
+let rescheduleBookingId = null;
+function startReschedule(id, name) {
+    rescheduleBookingId = id;
+    showToast(`מזיז את השיעור של ${name}... בחר מועד חדש ביומן למטה`);
+    document.getElementById('adminAvailGrid').scrollIntoView({ behavior: 'smooth' });
+}
+
+function handleAdminSlotClick(el) {
+    if (rescheduleBookingId) {
+        completeReschedule(el);
+    } else {
+        toggleAvail(el);
+    }
+}
+
+function completeReschedule(el) {
+    const date = el.parentElement.querySelector('h3').dataset.date;
+    const time = el.innerText.trim();
+    db.collection("bookings").doc(rescheduleBookingId).update({
+        date: date,
+        time: time
+    }).then(() => {
+        showToast("השיעור הועבר בהצלחה");
+        rescheduleBookingId = null;
+        renderAvailGrid();
+    });
+}
+
+function isSlotAvailable(date, time) {
+  if (Array.isArray(time)) {
+    return time.every(slotTime => isSlotAvailable(date, slotTime));
+  }
+
+  const days = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
+  const dayIndex = new Date(date + 'T12:00:00').getDay();
+  const dayName = days[dayIndex];
+  const cols = document.querySelectorAll('.avail-col');
+  for (let col of cols) {
+    const header = col.querySelector('h3').innerText;
+    if (header.includes(dayName)) {
+      const slots = col.querySelectorAll('.avail-slot');
+      for (let slot of slots) {
+        if (slot.innerText.trim() === time && !slot.classList.contains('free')) {
+          return false;
+        }
+      }
+    }
+  }
+  return true;
+}
+
+function cancelBookingDB(id) {
+  showConfirm('האם לבטל את השיעור?', () => {
+    db.collection("bookings").doc(id).get().then(doc => {
+      if (!doc.exists) return;
+      const b = doc.data();
+      db.collection("bookings").doc(id).update({ status: "בוטל" }).then(() => {
+        showToast('השיעור בוטל!');
+        const days = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
+        const dayName = days[new Date(b.date + 'T12:00:00').getDay()];
+        db.collection("availability").doc(`${dayName}_${b.time}`).set({
+          day: dayName, time: b.time, isFree: true
+        }, { merge: true }).then(() => { renderAvailGrid(); });
+      });
+    });
+  });
+}
+
+function permanentlyDeleteDB(id) {
+  showConfirm('האם למחוק לצמיתות את השיעור מהמסד?', () => {
+    db.collection("bookings").doc(id).get().then(doc => {
+      if (!doc.exists) return;
+      const b = doc.data();
+      db.collection("bookings").doc(id).delete().then(() => {
+        showToast('השיעור נמחק לצמיתות!');
+        const days = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
+        const dayName = days[new Date(b.date + 'T12:00:00').getDay()];
+        db.collection("availability").doc(`${dayName}_${b.time}`).set({ isFree: true }, { merge: true }).then(() => renderAvailGrid());
+      });
+    });
+  });
+}
+
+function restoreBookingDB(id) {
+  db.collection("bookings").doc(id).get().then(doc => {
+    if (!doc.exists) return;
+    const b = doc.data();
+    db.collection("bookings").doc(id).update({ status: "מאושר" }).then(() => {
+      showToast('השיעור שוחזר בהצלחה!');
+      const days = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
+      const dayName = days[new Date(b.date + 'T12:00:00').getDay()];
+      db.collection("availability").doc(`${dayName}_${b.time}`).set({ isFree: false }, { merge: true }).then(() => renderAvailGrid());
+    });
+  });
+}
+
+function deleteCancelledBookings() {
+  showConfirm('האם למחוק את כל השיעורים המבוטלים?', () => {
+    db.collection("bookings").where("status", "==", "בוטל").get().then(snapshot => {
+      const batch = db.batch();
+      snapshot.forEach(doc => batch.delete(doc.ref));
+      batch.commit().then(() => showToast('כל השיעורים המבוטלים נמחקו'));
+    });
+  });
+}
+
+function approveBookingDB(id, btn) {
+  db.collection("bookings").doc(id).get().then(doc => {
+    if (!doc.exists) return;
+    const b = doc.data();
+    db.collection("bookings").doc(id).update({ status: "מאושר" }).then(() => {
+      showToast('השיעור אושר!');
+
+      db.collection("availability").doc(`${b.date}_${b.time}`).set({
+        date: b.date,
+        time: b.time,
+        isFree: false
+      }).then(() => {
+        renderAvailGrid();
+      });
+    });
+  });
+}
+
+function sendNotification(type, bookingData) {
+  const baseParams = {
+    student_name: bookingData.name,
+    date: bookingData.date,
+    time: bookingData.time,
+    topic: bookingData.topic,
+    grade: bookingData.grade,
+    phone: bookingData.phone || 'לא הוזן',
+    email: bookingData.email || 'לא הוזן',
+    lesson_format: bookingData.lessonFormat,
+    user_comments: bookingData.comments || '',
+    type: type
+  };
+
+  // Admin copy (always)
+  emailjs.send("service_uiiqhnd", "template_e6swvbo", {
+    ...baseParams,
+    to_email: "nooam.gabay@gmail.com"
+  }, "JI7HdPnpg063aq0Pl");
+
+  // Student confirmation when email is available
+  if (bookingData.email) {
+    emailjs.send("service_uiiqhnd", "template_e6swvbo", {
+      ...baseParams,
+      to_email: bookingData.email
+    }, "JI7HdPnpg063aq0Pl");
+  }
+}
+
+function deleteFromCalendar(booking) {
+  const gcalUrl = `https://calendar.google.com/calendar/r/search?q=${encodeURIComponent(booking.name + ' ' + booking.topic)}`;
+  window.open(gcalUrl, '_blank');
+  showToast('נפתח גוגל קלנדר — מחק את האירוע שם ידנית');
+}
+
+function toggleAvail(el) {
+  el.classList.toggle('free');
+  const date = el.parentElement.querySelector('h3').dataset.date;
+  const time = el.innerText.trim();
+  const isFree = el.classList.contains('free');
+
+  db.collection("availability").doc(`${date}_${time}`).set({
+    date: date,
+    time: time,
+    isFree: isFree
+  }).then(() => {
+    showToast(`זמינות בתאריך ${date} בשעה ${time} עודכנה`);
+  });
+}
+
+function copyDayAvail(btn) {
+  const col = btn.parentElement;
+  const currentDate = col.querySelector('h3').dataset.date;
+  const nextDateObj = new Date(currentDate);
+  nextDateObj.setDate(nextDateObj.getDate() + 7);
+  const nextDate = nextDateObj.toISOString().split('T')[0];
+
+  const slots = col.querySelectorAll('.avail-slot');
+  const batch = db.batch();
+
+  slots.forEach(slot => {
+    const time = slot.innerText.trim();
+    const isFree = slot.classList.contains('free');
+    const nextId = `${nextDate}_${time}`;
+    batch.set(db.collection("availability").doc(nextId), {
+      date: nextDate,
+      time: time,
+      isFree: isFree
+    });
+  });
+
+  batch.commit().then(() => {
+    showToast(`זמינות יום ${currentDate} הועתקה לתאריך ${nextDate}`);
+  });
+}
+
+function resetForm() {
+  document.getElementById('fname').value = '';
+  document.getElementById('fphone').value = '';
+  document.getElementById('femail').value = '';
+  document.getElementById('fdate').value = '';
+  document.getElementById('fcomments').value = '';
+  document.querySelectorAll('.chip').forEach(e => e.classList.remove('selected'));
+  document.querySelectorAll('.time-slot').forEach(e => e.classList.remove('selected'));
+  document.getElementById('bookingSummary').style.display = 'none';
+
+  // Re-enable the submit button for subsequent bookings
+  const submitBtn = document.getElementById('submitBtn');
+  if (submitBtn) {
+    submitBtn.disabled = false;
+    submitBtn.innerText = 'סיים וקבע שיעור';
+    submitBtn.style.opacity = '1';
+  }
+
+  maxReachedStep = 1;
+  nextStep(1);
+  document.querySelector('.progress').style.display = 'flex';
+  applyProfileToBookingForm();
+  window.location.hash = '#book';
+  const bookSection = document.getElementById('book');
+  if (bookSection) {
+    bookSection.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+let _confirmCb = null;
+function showConfirm(msg, onConfirm) {
+    _confirmCb = onConfirm;
+    document.getElementById('confirm-msg').innerText = msg;
+    const modal = document.getElementById('confirm-modal');
+    modal.style.display = 'flex';
+    document.getElementById('confirm-ok').onclick = () => {
+        modal.style.display = 'none';
+        if (_confirmCb) _confirmCb();
+        _confirmCb = null;
+    };
+    document.getElementById('confirm-cancel').onclick = () => {
+        modal.style.display = 'none';
+        _confirmCb = null;
+    };
+}
+
+function copyPhone() {
+    navigator.clipboard.writeText('0586458414').then(() => {
+        showToast('המספר הועתק!');
+    }).catch(() => {
+        // Fallback for older browsers
+        const el = document.createElement('textarea');
+        el.value = '0586458414';
+        el.style.position = 'fixed'; el.style.opacity = '0';
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+        showToast('המספר הועתק!');
+    });
+}
+
+function showToast(msg) {
+    const c = document.getElementById('toast-container');
+    const t = document.createElement('div');
+    t.className = 'toast';
+    t.innerHTML = `<div class="toast-icon">✓</div><span>${msg}</span>`;
+    c.appendChild(t);
+    setTimeout(() => {
+        if(c.contains(t)) c.removeChild(t);
+    }, 4000);
+}
+
+let adminKeySequence = '';
+document.addEventListener('keydown', (e) => {
+  if (!e.key) return;
+  // Ignore if user is typing in a form
+  if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+
+  adminKeySequence += e.key.toLowerCase();
+  if (adminKeySequence.includes('gab') || adminKeySequence.includes('עשנ')) {
+    adminKeySequence = '';
+    showAuth();
+  }
+  if (adminKeySequence.length > 10) adminKeySequence = '';
+});
+
+// Mobile Admin Trigger (Triple-click on Logo)
+let logoClicks = 0;
+document.getElementById('adminTrigger').addEventListener('click', () => {
+    logoClicks++;
+    if (logoClicks === 3) {
+        logoClicks = 0;
+        const currentUser = firebase.auth().currentUser;
+        if (currentUser && currentUser.email === 'nooam.gabay@gmail.com') {
+            openAdminPanel();
+        } else {
+            showAuth();
+        }
+    }
+    setTimeout(() => { logoClicks = 0; }, 2000);
+});
+// Generate Floating Math Symbols dynamically
+function createMathBg() {
+    const bg = document.createElement('div');
+    bg.className = 'math-bg';
+    bg.id = 'mathBg';
+    
+    const symbols = ['Σ', '∫', 'π', '√', '∞', 'Δ', 'θ', 'Ω', 'λ', 'φ', '∑', '∂', '≈', '≠', '≤', '≥', '∇', '∈', '∉', '⊂', '⊃', '⊆', '⊇'];
+    symbols.forEach((sym, i) => {
+        const span = document.createElement('span');
+        span.className = 'sym';
+        span.innerText = sym;
+        span.style.left = `${(i * 10) + 5}%`;
+        span.style.animationDuration = `${20 + Math.random() * 25}s`;
+        span.style.animationDelay = `-${Math.random() * 30}s`;
+        span.style.fontSize = `${1.5 + Math.random() * 2.5}rem`;
+        bg.appendChild(span);
+    });
+    
+    document.body.insertBefore(bg, document.body.firstChild);
+}
+createMathBg();
+
+</script>
+</body>
+</html>
