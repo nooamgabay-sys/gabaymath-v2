@@ -4280,7 +4280,54 @@ function createMathBg() {
     document.body.insertBefore(bg, document.body.firstChild);
 }
 createMathBg();
-
 </script>
+
+<script src="script.js"></script>
+
+<div style="max-width: 600px; margin: 2rem auto; padding: 1.5rem; background: var(--card-bg, #1a1a1a); border-radius: 12px; color: #fff;">
+  <h2 style="margin-top: 0;">שאל את Gemini - עוזר מתמטיקה</h2>
+  <textarea id="prompt-input" rows="3" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #444; background: #222; color: #fff; font-family: inherit; resize: vertical;" placeholder="הקלד כאן את השאלה במתמטיקה…"></textarea>
+  <button id="ask-btn" style="margin-top: 0.8rem; padding: 10px 20px; border: none; border-radius: 8px; background: #0070f3; color: white; font-weight: bold; cursor: pointer;">שלח שאלה</button>
+
+  <div id="gemini-response" style="margin-top: 1.5rem; padding: 1rem; background: #111; border-radius: 8px; min-height: 3rem; white-space: pre-wrap; line-height: 1.6;"></div>
+</div>
+
+<script>
+  async function askGemini(prompt) {
+    try {
+      const resp = await fetch("/.netlify/functions/gemini", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt })
+      });
+
+      if (!resp.ok) {
+        const err = await resp.json();
+        throw new Error(err.error || "שגיאת שרת");
+      }
+      const data = await resp.json();
+      return data.answer;
+    } catch (e) {
+      console.error(e);
+      return "❗️ אירעה שגיאה: " + e.message;
+    }
+  }
+
+  document.getElementById("ask-btn").addEventListener("click", async () => {
+    const input = document.getElementById("prompt-input");
+    const answerDiv = document.getElementById("gemini-response");
+
+    const prompt = input.value.trim();
+    if (!prompt) {
+      answerDiv.textContent = "⚠️ יש להזין שאלה לפני שליחה.";
+      return;
+    }
+
+    answerDiv.textContent = "⏳ מחשב תשובה…";
+    const answer = await askGemini(prompt);
+    answerDiv.textContent = answer;
+  });
+</script>
+
 </body>
 </html>
