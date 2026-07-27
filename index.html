@@ -797,10 +797,39 @@ body.light-mode #floatingContact .fc-copy svg { fill: #1a6b35; }
 @media (max-width: 900px) { .nav-auth { display: none; } }
 
 /* ── VOICE ASSISTANT ─────────────────────────────── */
-.voice-assistant-fab {
+.voice-assistant-fab-wrap {
   position: fixed;
   right: 1.1rem;
   bottom: 6.2rem;
+  z-index: 10006;
+  width: 60px;
+  height: 60px;
+}
+.voice-assistant-orbit-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 128px;
+  height: 128px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: voiceAssistantOrbitSpin 14s linear infinite;
+}
+.voice-assistant-orbit-text text {
+  fill: var(--gold, #d4af37);
+  filter: drop-shadow(0 0 4px rgba(212,175,55,0.65));
+}
+@keyframes voiceAssistantOrbitSpin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+@media (max-width: 900px) {
+  .voice-assistant-orbit-text { width: 108px; height: 108px; }
+}
+.voice-assistant-fab {
+  position: absolute;
+  top: 0;
+  left: 0;
   z-index: 10006;
   display: flex;
   flex-direction: column;
@@ -1164,7 +1193,8 @@ body.light-mode .voice-assistant-separator::after {
   background: rgba(0,0,0,0.08);
 }
 @media (max-width: 600px) {
-  .voice-assistant-fab { right: 0.75rem; bottom: 5.8rem; width: 56px; height: 56px; }
+  .voice-assistant-fab-wrap { right: 0.75rem; bottom: 5.8rem; width: 56px; height: 56px; }
+  .voice-assistant-fab { width: 56px; height: 56px; }
   .voice-assistant-overlay { padding: 0 0.75rem 6.6rem 0.75rem; }
   .voice-assistant-modal { width: min(340px, 92vw); max-height: min(460px, 72vh); padding: 0.8rem; }
   .voice-assistant-center .voice-assistant-visual { width: 90px; height: 90px; }
@@ -1454,6 +1484,9 @@ input.field-locked {
                 <label>שעה פנויה</label>
                 <p id="timeHelp" style="color:var(--gold); font-size:0.9rem; margin-bottom: 1rem; display: none;">בחר שעה פנויה:</p>
                 <div class="grid" id="timeGrid" style="display: none;">
+                    <div class="time-slot" onclick="selectTime(this)">12:00</div>
+                    <div class="time-slot" onclick="selectTime(this)">13:00</div>
+                    <div class="time-slot" onclick="selectTime(this)">14:00</div>
                     <div class="time-slot" onclick="selectTime(this)">15:00</div>
                     <div class="time-slot" onclick="selectTime(this)">16:00</div>
                     <div class="time-slot" onclick="selectTime(this)">17:00</div>
@@ -1615,13 +1648,13 @@ input.field-locked {
                 </div>
             </div>
             <div class="avail-grid" id="adminAvailGrid">
-                <div class="avail-col"><h3>ראשון</h3><div class="avail-slot free" onclick="handleAdminSlotClick(this)">15:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">16:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">17:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">18:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">19:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">20:00</div><button class="copy-btn" onclick="copyDayAvail(this)">העתק לשבוע הבא</button></div>
-                <div class="avail-col"><h3>שני</h3><div class="avail-slot free" onclick="handleAdminSlotClick(this)">15:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">16:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">17:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">18:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">19:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">20:00</div><button class="copy-btn" onclick="copyDayAvail(this)">העתק לשבוע הבא</button></div>
-                <div class="avail-col"><h3>שלישי</h3><div class="avail-slot free" onclick="handleAdminSlotClick(this)">15:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">16:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">17:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">18:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">19:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">20:00</div><button class="copy-btn" onclick="copyDayAvail(this)">העתק לשבוע הבא</button></div>
-                <div class="avail-col"><h3>רביעי</h3><div class="avail-slot free" onclick="handleAdminSlotClick(this)">15:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">16:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">17:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">18:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">19:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">20:00</div><button class="copy-btn" onclick="copyDayAvail(this)">העתק לשבוע הבא</button></div>
-                <div class="avail-col"><h3>חמישי</h3><div class="avail-slot free" onclick="handleAdminSlotClick(this)">15:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">16:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">17:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">18:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">19:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">20:00</div><button class="copy-btn" onclick="copyDayAvail(this)">העתק לשבוע הבא</button></div>
-                <div class="avail-col"><h3>שישי</h3><div class="avail-slot free" onclick="handleAdminSlotClick(this)">15:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">16:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">17:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">18:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">19:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">20:00</div><button class="copy-btn" onclick="copyDayAvail(this)">העתק לשבוע הבא</button></div>
-                <div class="avail-col"><h3>שבת</h3><div class="avail-slot free" onclick="handleAdminSlotClick(this)">15:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">16:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">17:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">18:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">19:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">20:00</div><button class="copy-btn" onclick="copyDayAvail(this)">העתק לשבוע הבא</button></div>
+                <div class="avail-col"><h3>ראשון</h3><div class="avail-slot free" onclick="handleAdminSlotClick(this)">12:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">13:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">14:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">15:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">16:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">17:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">18:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">19:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">20:00</div><button class="copy-btn" onclick="copyDayAvail(this)">העתק לשבוע הבא</button></div>
+                <div class="avail-col"><h3>שני</h3><div class="avail-slot free" onclick="handleAdminSlotClick(this)">12:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">13:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">14:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">15:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">16:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">17:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">18:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">19:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">20:00</div><button class="copy-btn" onclick="copyDayAvail(this)">העתק לשבוע הבא</button></div>
+                <div class="avail-col"><h3>שלישי</h3><div class="avail-slot free" onclick="handleAdminSlotClick(this)">12:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">13:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">14:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">15:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">16:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">17:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">18:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">19:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">20:00</div><button class="copy-btn" onclick="copyDayAvail(this)">העתק לשבוע הבא</button></div>
+                <div class="avail-col"><h3>רביעי</h3><div class="avail-slot free" onclick="handleAdminSlotClick(this)">12:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">13:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">14:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">15:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">16:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">17:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">18:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">19:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">20:00</div><button class="copy-btn" onclick="copyDayAvail(this)">העתק לשבוע הבא</button></div>
+                <div class="avail-col"><h3>חמישי</h3><div class="avail-slot free" onclick="handleAdminSlotClick(this)">12:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">13:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">14:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">15:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">16:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">17:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">18:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">19:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">20:00</div><button class="copy-btn" onclick="copyDayAvail(this)">העתק לשבוע הבא</button></div>
+                <div class="avail-col"><h3>שישי</h3><div class="avail-slot free" onclick="handleAdminSlotClick(this)">12:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">13:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">14:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">15:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">16:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">17:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">18:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">19:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">20:00</div><button class="copy-btn" onclick="copyDayAvail(this)">העתק לשבוע הבא</button></div>
+                <div class="avail-col"><h3>שבת</h3><div class="avail-slot free" onclick="handleAdminSlotClick(this)">12:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">13:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">14:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">15:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">16:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">17:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">18:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">19:00</div><div class="avail-slot free" onclick="handleAdminSlotClick(this)">20:00</div><button class="copy-btn" onclick="copyDayAvail(this)">העתק לשבוע הבא</button></div>
             </div>
             <button class="btn btn-mini" style="margin-top: 2rem;" onclick="showToast('הזמינות עודכנה!')">שמור זמינות</button>
         </div>
@@ -1728,11 +1761,19 @@ input.field-locked {
 
 <div id="toast-container"></div>
 
-<button id="voiceAssistantFab" class="voice-assistant-fab" type="button" aria-label="פתח עוזרת קולית" onclick="requestVoiceAssistantAccess()">
-    <div class="voice-assistant-visual" aria-hidden="true">
-        <canvas id="voiceAssistantCanvasFab" class="voice-assistant-canvas"></canvas>
-    </div>
-</button>
+<div class="voice-assistant-fab-wrap">
+    <svg class="voice-assistant-orbit-text" viewBox="0 0 100 100" aria-hidden="true">
+        <path id="voiceAssistantOrbitPath" d="M 50,50 m -44,0 a 44,44 0 1,1 88,0 a 44,44 0 1,1 -88,0" fill="none"></path>
+        <text font-size="10.5" font-weight="700" letter-spacing="2">
+            <textPath href="#voiceAssistantOrbitPath" startOffset="0%">עוזר AI • עוזר AI • </textPath>
+        </text>
+    </svg>
+    <button id="voiceAssistantFab" class="voice-assistant-fab" type="button" aria-label="פתח עוזרת קולית" onclick="requestVoiceAssistantAccess()">
+        <div class="voice-assistant-visual" aria-hidden="true">
+            <canvas id="voiceAssistantCanvasFab" class="voice-assistant-canvas"></canvas>
+        </div>
+    </button>
+</div>
 
 <div id="voiceAssistantOverlay" class="voice-assistant-overlay" onclick="closeVoiceAssistantModal(event)">
   <div class="voice-assistant-modal" role="dialog" aria-modal="true" aria-labelledby="voiceAssistantTitle">
@@ -1752,7 +1793,7 @@ input.field-locked {
     <div class="voice-assistant-bottom">
       <div class="voice-assistant-separator"><span>או</span></div>
       <div class="voice-assistant-entry">
-        <input type="text" id="assistantTextInput" placeholder="ציין: תאריך, שעה, כיתה ונושא." oninput="handleAssistantTyping()" onkeydown="handleAssistantTextKeydown(event)">
+        <input type="text" id="assistantTextInput" placeholder="שאל את גבAI" oninput="handleAssistantTyping()" onkeydown="handleAssistantTextKeydown(event)">
         <button class="voice-assistant-mic-btn" type="button" aria-label="הפעלת מיקרופון" onclick="startVoiceAssistantListening()">
           <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
             <path d="M12 14.5c1.93 0 3.5-1.57 3.5-3.5V5.5a3.5 3.5 0 1 0-7 0V11c0 1.93 1.57 3.5 3.5 3.5Zm5-3.5a1 1 0 0 1 2 0 7.01 7.01 0 0 1-6 6.93V20h3a1 1 0 1 1 0 2H8a1 1 0 1 1 0-2h3v-2.07A7.01 7.01 0 0 1 5 11a1 1 0 1 1 2 0 5 5 0 0 0 10 0Z"/>
@@ -2483,6 +2524,71 @@ function showAssistantMessage(message) {
     box.classList.toggle('active', !!message);
 }
 
+async function getCalendarContextForGemini(daysAhead = 14) {
+    try {
+        const now = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Jerusalem' }));
+        const startStr = now.toISOString().split('T')[0];
+        const endDate = new Date(now); endDate.setDate(now.getDate() + daysAhead);
+        const endStr = endDate.toISOString().split('T')[0];
+
+        const [bookingSnap, availSnap] = await Promise.all([
+            db.collection('bookings').where('date', '>=', startStr).where('date', '<', endStr).get(),
+            db.collection('availability').where('date', '>=', startStr).where('date', '<', endStr).get()
+        ]);
+
+        const takenLines = [];
+        bookingSnap.forEach(doc => {
+            const b = doc.data();
+            if (b.status !== 'בוטל') {
+                takenLines.push(`${b.date} בשעה ${b.time}${b.endTime ? '-' + b.endTime : ''} - תפוס`);
+            }
+        });
+
+        const blockedLines = [];
+        availSnap.forEach(doc => {
+            const a = doc.data();
+            if (a.isFree === false) {
+                blockedLines.push(`${a.date} בשעה ${a.time} - חסום ע"י המורה`);
+            }
+        });
+
+        if (takenLines.length === 0 && blockedLines.length === 0) {
+            return `היום: ${startStr}. אין שיעורים או חסימות רשומים ב-${daysAhead} הימים הקרובים - כל השעות פנויות באופן עקרוני.`;
+        }
+
+        return [
+            `היום: ${startStr}.`,
+            `שעות תפוסות (כבר קבועות):`,
+            ...takenLines,
+            `שעות חסומות ע"י המורה:`,
+            ...blockedLines
+        ].join('\n');
+    } catch (err) {
+        console.error('Failed to load calendar context for Gemini:', err);
+        return '';
+    }
+}
+
+async function askGemini(prompt) {
+    try {
+        const resp = await fetch("/.netlify/functions/gemini", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt })
+        });
+
+        if (!resp.ok) {
+            const err = await resp.json();
+            throw new Error(err.error || "שגיאת שרת");
+        }
+        const data = await resp.json();
+        return data.answer;
+    } catch (e) {
+        console.error(e);
+        return "❗️ אירעה שגיאה: " + e.message;
+    }
+}
+
 function speakText(text) {
     try {
         const input = document.getElementById('assistantTextInput');
@@ -2740,11 +2846,14 @@ function scrollToBookingStep(stepNumber) {
     if (bookSection) bookSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-async function handleVoiceTranscript(transcript) {
+async function handleVoiceTranscript(transcript, speak = true) {
     setAssistantState('processing', 'מעבד...');
     showAssistantMessage(`את/ה אמרת:\n${transcript}`);
     const input = document.getElementById('assistantTextInput');
     if (input) input.blur();
+
+    const questionWords = /^(מה|איך|למה|מתי|כמה|האם|מי|איפה|מהו|מהי)\b|\?/;
+    const looksLikeQuestion = questionWords.test(transcript.trim());
 
     const date = parseSpokenDate(transcript);
     const time = parseSpokenTime(transcript);
@@ -2763,13 +2872,23 @@ async function handleVoiceTranscript(transcript) {
     fillAssistantBooking(parsed);
     const commentsEl = document.getElementById('fcomments');
 
-    if (!date || !time) {
-        setAssistantState('busy', 'תפוס - עובר ללוח השעות');
-        const response = 'לא הצלחתי להבין את התאריך או השעה. מעביר אותך לבחירת שעה פנויה.';
-        showAssistantMessage(response);
-        speakText(response);
-        scrollToBookingStep(3);
-        return response;
+    if (looksLikeQuestion || !date || !time) {
+        setAssistantState('processing', 'חושב על התשובה...');
+        const calendarContext = await getCalendarContextForGemini();
+        const fullPrompt = [
+            'אתה עוזר קולי באתר של נועם גבאי, מורה פרטי למתמטיקה.',
+            'ענה בעברית, בקצרה וברורה, בטון חברותי.',
+            'אם השאלה נוגעת לזמינות, שעות פנויות או קביעת שיעור - התבסס אך ורק על נתוני היומן הבאים ואל תמציא שעות:',
+            calendarContext,
+            'אם השאלה היא שאלה כללית (למשל שאלה במתמטיקה) שלא קשורה ליומן - פשוט ענה עליה כרגיל.',
+            `שאלת התלמיד/ה: ${transcript}`
+        ].join('\n');
+
+        const geminiAnswer = await askGemini(fullPrompt);
+        setAssistantState('idle', '');
+        showAssistantMessage(geminiAnswer);
+        if (speak) speakText(geminiAnswer);
+        return geminiAnswer;
     }
 
     const available = await checkVoiceAvailability(date, time);
@@ -2780,7 +2899,7 @@ async function handleVoiceTranscript(transcript) {
         setAssistantState('processing', 'מעדכן הזמנה...');
         const response = `מצוין, קבעתי לך שיעור ל${date} בשעה ${time}.`;
         showAssistantMessage(response);
-        speakText(response);
+        if (speak) speakText(response);
         showToast(response);
         scrollToBookingStep(3);
         setTimeout(() => {
@@ -2792,7 +2911,7 @@ async function handleVoiceTranscript(transcript) {
         setAssistantState('busy', 'תפוס - עובר ללוח השעות');
         const response = 'מצטער, השעה הזו תפוסה. מעביר אותך לבחירת שעה פנויה.';
         showAssistantMessage(response);
-        speakText(response);
+        if (speak) speakText(response);
         setBookingDate(date);
         scrollToBookingStep(3);
         return response;
@@ -2890,17 +3009,19 @@ async function submitAssistantText() {
     if (!input) return;
     const text = input.value.trim();
     if (!text) return;
+    input.value = '';
     input.blur();
     setAssistantState('processing', 'מעבד...');
     showAssistantMessage(`שאלה כתובה:\n${text}`);
     try {
-        const response = await handleVoiceTranscript(text);
+        const response = await handleVoiceTranscript(text, false);
         if (response) showAssistantMessage(response);
     } catch (err) {
         console.error(err);
         const response = 'אירעה שגיאה בעיבוד השאלה.';
         showAssistantMessage(response);
-        speakText(response);
+    } finally {
+        if (input) input.focus({ preventScroll: true });
     }
 }
 
@@ -4280,51 +4401,6 @@ function createMathBg() {
     document.body.insertBefore(bg, document.body.firstChild);
 }
 createMathBg();
-</script>
-
-<div style="max-width: 600px; margin: 2rem auto; padding: 1.5rem; background: var(--card-bg, #1a1a1a); border-radius: 12px; color: #fff;">
-  <h2 style="margin-top: 0;">שאל את Gemini - עוזר מתמטיקה</h2>
-  <textarea id="prompt-input" rows="3" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #444; background: #222; color: #fff; font-family: inherit; resize: vertical;" placeholder="הקלד כאן את השאלה במתמטיקה…"></textarea>
-  <button id="ask-btn" style="margin-top: 0.8rem; padding: 10px 20px; border: none; border-radius: 8px; background: #0070f3; color: white; font-weight: bold; cursor: pointer;">שלח שאלה</button>
-
-  <div id="gemini-response" style="margin-top: 1.5rem; padding: 1rem; background: #111; border-radius: 8px; min-height: 3rem; white-space: pre-wrap; line-height: 1.6;"></div>
-</div>
-
-<script>
-  async function askGemini(prompt) {
-    try {
-      const resp = await fetch("/.netlify/functions/gemini", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt })
-      });
-
-      if (!resp.ok) {
-        const err = await resp.json();
-        throw new Error(err.error || "שגיאת שרת");
-      }
-      const data = await resp.json();
-      return data.answer;
-    } catch (e) {
-      console.error(e);
-      return "❗️ אירעה שגיאה: " + e.message;
-    }
-  }
-
-  document.getElementById("ask-btn").addEventListener("click", async () => {
-    const input = document.getElementById("prompt-input");
-    const answerDiv = document.getElementById("gemini-response");
-
-    const prompt = input.value.trim();
-    if (!prompt) {
-      answerDiv.textContent = "⚠️ יש להזין שאלה לפני שליחה.";
-      return;
-    }
-
-    answerDiv.textContent = "⏳ מחשב תשובה…";
-    const answer = await askGemini(prompt);
-    answerDiv.textContent = answer;
-  });
 </script>
 
 </body>
