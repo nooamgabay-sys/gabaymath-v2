@@ -2569,20 +2569,42 @@ async function getCalendarContextForGemini(daysAhead = 14) {
     }
 }
 
+// ── Conversation history for multi-turn Gemini chat ──
+let conversationHistory = [];
+
+function resetConversationHistory() {
+    conversationHistory = [];
+}
+
 async function askGemini(prompt) {
     try {
+        // Append the new user message to the conversation history
+        conversationHistory.push({ role: 'user', parts: [{ text: prompt }] });
+
         const resp = await fetch("/.netlify/functions/gemini", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt })
+            body: JSON.stringify({ history: conversationHistory })
         });
 
         if (!resp.ok) {
             const err = await resp.json();
+            // Remove the failed user message so history stays clean
+            conversationHistory.pop();
             throw new Error(err.error || "שגיאת שרת");
         }
         const data = await resp.json();
-        return data.answer;
+        const answer = data.answer;
+
+        // Append the model's response to keep context for the next turn
+        conversationHistory.push({ role: 'model', parts: [{ text: answer }] });
+
+        // Safety cap: keep only the last 20 turns (10 exchanges) to avoid huge payloads
+        if (conversationHistory.length > 20) {
+            conversationHistory = conversationHistory.slice(-20);
+        }
+
+        return answer;
     } catch (e) {
         console.error(e);
         return "❗️ אירעה שגיאה: " + e.message;
@@ -3041,6 +3063,7 @@ function openVoiceAssistantModal() {
     const input = document.getElementById('assistantTextInput');
     if (overlay) overlay.classList.add('active');
     initVoiceAssistantVisual();
+    resetConversationHistory();
     setAssistantState('idle', '');
     showAssistantMessage('');
     if (input) input.value = '';
@@ -3066,6 +3089,7 @@ function closeVoiceAssistantModal(event) {
     }
     clearAssistantState();
     showAssistantMessage('');
+    resetConversationHistory();
     if (input) input.value = '';
 }
 
