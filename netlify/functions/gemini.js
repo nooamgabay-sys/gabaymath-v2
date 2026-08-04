@@ -1,114 +1,68 @@
-// netlify/functions/gemini.js
-// Multi-turn chat with Gemini – accepts a conversation history array.
+const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
 
-/** @type {import('@netlify/functions').Handler} */
-exports.handler = async (event, context) => {
-  // Handle CORS preflight
-  if (event.httpMethod === "OPTIONS") {
-    return {
-      statusCode: 204,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type",
-      },
-      body: "",
-    };
-  }
+const systemInstruction = [
+  'אתה עוזר קולי באתר של נועם גבאי, מורה פרטי למתמטיקה.',
+  'ענה בעברית, בקצרה ובטון ידידותי.',
+  'בתהליך קביעת שיעור: אם חסר תאריך, בקש רק תאריך. אם חסרה שעה, בקש רק שעה.',
+  'אם גם תאריך וגם שעה כבר סופקו, אל תגיד שהשיעור נקבע ואל תאשר הזמנה בעצמך.',
+  'האתר בלבד מבצע הזמנה בפועל באמצעות JavaScript לאחר בדיקת זמינות.',
+  'מותר לך להסביר שהמערכת בודקת זמינות או להעביר להשלמת רישום, אבל אסור לטעון שקבעת שיעור.'
+].join('\n');
 
-  if (event.httpMethod !== "POST") {
+exports.handler = async (event) => {
+  if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
-      body: JSON.stringify({ error: "Method Not Allowed – use POST" }),
+      headers: { Allow: 'POST' },
+      body: JSON.stringify({ error: 'Method not allowed' })
     };
   }
 
-  let payload;
-  try {
-    payload = JSON.parse(event.body);
-  } catch (e) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: "Invalid JSON body" }),
-    };
-  }
-
-  // Accept either { history: [...] } (multi-turn) or { prompt: "..." } (legacy single-turn)
-  const history = payload.history; // array of { role, parts }
-  const legacyPrompt = payload.prompt?.trim();
-
-  if (!history && !legacyPrompt) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: "Missing 'history' or 'prompt' field" }),
-    };
-  }
-
-  const { GoogleGenerativeAI } = require("@google/generative-ai");
-
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    console.error("❌ GEMINI_API_KEY not set in environment");
+  if (!GEMINI_API_KEY) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Server mis-configuration" }),
+      body: JSON.stringify({ error: 'Missing GEMINI_API_KEY' })
     };
   }
 
-  const genAI = new GoogleGenerativeAI(apiKey);
-
-  // System instruction: short, plain-text Hebrew for TTS
-  const systemInstruction =
-    "אתה עוזר קולי חכם באתר של נעם גבאי, מורה פרטי למתמטיקה (גבאי מתמטיקה). " +
-    "ענה תמיד בעברית, בטון חברותי ובגובה העיניים. " +
-    "אורך התשובה: משפט אחד עד שלושה משפטים בלבד, כי התשובה מושמעת בקול (Text-To-Speech). " +
-    "פורמט: טקסט פשוט בלבד! אסור להשתמש ב-Markdown, כוכביות (**), תבליטים, רשימות או סימנים מיוחדים. " +
-    "אם תלמיד שואל על שעות פנויות או קביעת שיעור בלי לציין תאריך, שאל אותו באופן טבעי לאיזה יום הוא מתכוון.";
-
-  const model = genAI.getGenerativeModel({
-    model: "gemini-3.6-flash",
-    systemInstruction,
-  });
-
-  const corsHeaders = {
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
-  };
-
   try {
-    let responseText;
+    const { history = [] } = JSON.parse(event.body || '{}');
+    const contents = Array.isArray(history) ? history : [];
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
 
-    if (history && Array.isArray(history) && history.length > 0) {
-      // ── Multi-turn chat mode ──
-      // The last entry in history must be the current user message.
-      // Everything before it is the prior conversation context.
-      const lastEntry = history[history.length - 1];
-      const priorHistory = history.slice(0, -1);
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        systemInstruction: {
+          parts: [{ text: systemInstruction }]
+        },
+        contents
+      })
+    });
 
-      const chat = model.startChat({ history: priorHistory });
-      const userMessage =
-        lastEntry.parts?.map((p) => p.text).join("\n") || "";
-      const result = await chat.sendMessage(userMessage);
-      responseText = result.response.text();
-    } else {
-      // ── Legacy single-turn fallback ──
-      const result = await model.generateContent(legacyPrompt);
-      responseText = result.response.text();
+    const data = await response.json();
+    if (!response.ok) {
+      return {
+        statusCode: response.status,
+        body: JSON.stringify({ error: data.error?.message || 'Gemini request failed' })
+      };
     }
+
+    const answer = data.candidates?.[0]?.content?.parts
+      ?.map(part => part.text || '')
+      .join('')
+      .trim() || 'לא הצלחתי לענות כרגע. נסו שוב בעוד רגע.';
 
     return {
       statusCode: 200,
-      headers: corsHeaders,
-      body: JSON.stringify({ answer: responseText }),
+      body: JSON.stringify({ answer })
     };
-  } catch (err) {
-    console.error("⚡ Gemini request failed:", err);
+  } catch (error) {
     return {
-      statusCode: 502,
-      headers: corsHeaders,
-      body: JSON.stringify({ error: "Gemini API error", details: err.message }),
+      statusCode: 500,
+      body: JSON.stringify({ error: error.message || 'Server error' })
     };
   }
 };
