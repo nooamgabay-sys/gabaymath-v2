@@ -4224,6 +4224,17 @@
       return '';
     }
 
+    function getConversationTranscriptText() {
+      return conversationHistory
+        .filter(entry => entry.role === 'user')
+        .map(entry => (entry.parts || []).map(part => part.text || '').join(' '))
+        .map(text => {
+          const match = text.match(/שאלת התלמיד\/ה:\s*([^\n]+)/);
+          return match ? match[1] : text;
+        })
+        .join(' ');
+    }
+
     function normalizeTopicText(text) {
       return (text || '').replace(/\s+/g, ' ').replace(/[׳״"']/g, '').trim();
     }
@@ -4396,14 +4407,13 @@
       const input = document.getElementById('assistantTextInput');
       if (input) input.blur();
 
-      const questionWords = /^(מה|איך|למה|מתי|כמה|האם|מי|איפה|מהו|מהי)\b|\?/;
-      const looksLikeQuestion = questionWords.test(transcript.trim());
-
-      const date = parseSpokenDate(transcript);
-      const time = parseSpokenTime(transcript);
-      const grade = matchGradeFromText(transcript);
-      const topicMatch = matchTopicForGrade(transcript, grade);
-      const customTopic = topicMatch ? '' : extractCustomTopicFromText(transcript);
+      const previousTranscriptText = getConversationTranscriptText();
+      const date = parseSpokenDate(transcript) || parseSpokenDate(previousTranscriptText);
+      const time = parseSpokenTime(transcript) || parseSpokenTime(previousTranscriptText);
+      const combinedTranscript = [previousTranscriptText, transcript].filter(Boolean).join(' ');
+      const grade = matchGradeFromText(transcript) || matchGradeFromText(combinedTranscript);
+      const topicMatch = matchTopicForGrade(transcript, grade) || matchTopicForGrade(combinedTranscript, grade);
+      const customTopic = topicMatch ? '' : (extractCustomTopicFromText(transcript) || extractCustomTopicFromText(combinedTranscript));
       const parsed = {
         grade,
         date,
@@ -4416,7 +4426,7 @@
       fillAssistantBooking(parsed);
       const commentsEl = document.getElementById('fcomments');
 
-      if (looksLikeQuestion || !date || !time) {
+      if (!date || !time) {
         setAssistantState('processing', 'חושב על התשובה...');
         const calendarContext = await getCalendarContextForGemini();
         const fullPrompt = [
@@ -4441,7 +4451,7 @@
         setBookingTime(time);
         if (!parsed.topicText && commentsEl) commentsEl.value = '';
         setAssistantState('processing', 'מעדכן הזמנה...');
-        const response = `מצוין, קבעתי לך שיעור ל${date} בשעה ${time}.`;
+        const response = `מצוין, קבעתי לך שיעור ל-${date} בשעה ${time}. מעביר אותך להשלמת הרישום.`;
         showAssistantMessage(response);
         if (speak) speakText(response);
         showToast(response);
