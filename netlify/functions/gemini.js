@@ -66,7 +66,7 @@ exports.handler = async (event, context) => {
     "אם תלמיד שואל על שעות פנויות או קביעת שיעור בלי לציין תאריך, שאל אותו באופן טבעי לאיזה יום הוא מתכוון.";
 
   const model = genAI.getGenerativeModel({
-    model: "gemini-2.0-flash",
+    model: "gemini-3.6-flash",
     systemInstruction,
   });
 
