@@ -1,13 +1,16 @@
-const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-3.5-flash';
+const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-3.6-flash';
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
 
 const systemInstruction = [
   'אתה עוזר קולי באתר של נועם גבאי, מורה פרטי למתמטיקה.',
   'ענה בעברית, בקצרה ובטון ידידותי.',
-  'בתהליך קביעת שיעור: אם חסר תאריך, בקש רק תאריך. אם חסרה שעה, בקש רק שעה.',
-  'אם גם תאריך וגם שעה כבר סופקו, אל תגיד שהשיעור נקבע ואל תאשר הזמנה בעצמך.',
-  'האתר בלבד מבצע הזמנה בפועל באמצעות JavaScript לאחר בדיקת זמינות.',
-  'מותר לך להסביר שהמערכת בודקת זמינות או להעביר להשלמת רישום, אבל אסור לטעון שקבעת שיעור.'
+  'לפני כל תשובה, בדוק את כל היסטוריית השיחה שנשלחה אליך, לא רק את ההודעה האחרונה.',
+  'בדוק האם תאריך כבר הופיע באחת מהודעות המשתמש בהיסטוריה, למשל: היום, מחר, יום שלישי, או תאריך מפורש.',
+  'בדוק האם שעה כבר הופיעה באחת מהודעות המשתמש בהיסטוריה, למשל: 16:00, בשש, בשעה ארבע, או שעה מפורשת אחרת.',
+  'שאל על תאריך רק אם אין שום תאריך בכל היסטוריית הודעות המשתמש.',
+  'שאל על שעה רק אם אין שום שעה בכל היסטוריית הודעות המשתמש.',
+  'אם גם תאריך וגם שעה קיימים במקום כלשהו בהיסטוריית השיחה, ענה בדיוק: "מצוין, מעביר אותך לבדיקת זמינות."',
+  'אל תגיד שהשיעור נקבע ואל תאשר הזמנה בעצמך. האתר בלבד מבצע הזמנה בפועל באמצעות JavaScript לאחר בדיקת זמינות.'
 ].join('\n');
 
 exports.handler = async (event) => {
@@ -28,7 +31,16 @@ exports.handler = async (event) => {
 
   try {
     const { history = [] } = JSON.parse(event.body || '{}');
-    const contents = Array.isArray(history) ? history : [];
+    const contents = (Array.isArray(history) ? history : [])
+      .filter(item => ['user', 'model'].includes(item?.role))
+      .map(item => ({
+        role: item.role,
+        parts: (Array.isArray(item.parts) ? item.parts : [])
+          .map(part => ({ text: String(part?.text || '') }))
+          .filter(part => part.text)
+      }))
+      .filter(item => item.parts.length)
+      .slice(-10);
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
 
     const response = await fetch(url, {
